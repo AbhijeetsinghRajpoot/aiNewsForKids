@@ -1,0 +1,51 @@
+name: Run Story Generator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg imagemagick
+          sudo sed -i 's/policy domain="path" rights="none" pattern="@\*"/policy domain="path" rights="read|write" pattern="@\*"/g' /etc/ImageMagick-6/policy.xml
+
+      - name: Install Python Dependencies
+        run: |
+          pip install \
+            moviepy==1.0.3 \
+            pillow<10 \
+            decorator==4.4.2 \
+            requests \
+            numpy \
+            openai \
+            elevenlabs \
+            google-api-python-client \
+            google-auth-oauthlib \
+            google-auth-httplib2
+
+      - name: Create YouTube API Credential Files
+        run: |
+          echo '${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}' > client_secret.json
+          echo '${{ secrets.YOUTUBE_TOKEN_JSON }}' > token.json
+
+      - name: Run Automation Script
+        env:
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python main.py
