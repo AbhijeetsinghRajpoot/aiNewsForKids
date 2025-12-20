@@ -1,45 +1,45 @@
 def get_storyboard():
     return [
         {
-            "keyword": "Kentucky Wildcats basketball fans arena celebration",
-            "text": "College basketball fans were buzzing as Kentucky and St. John’s squared off in a highly anticipated non-conference showdown.",
+            "keyword": "Texas A&M Aggies fans Kyle Field crowd",
+            "text": "A record-breaking crowd at Kyle Field witnessed history as No. 7 Texas A&M hosted No. 10 Miami in their first-ever College Football Playoff appearance.",
             "duration": 7,
-            "title": "Kentucky vs St. John’s 🔥 College Basketball Clash",
-            "description": "Kentucky basketball takes on St. John’s in a must-watch matchup. Here’s what you need to know about the game, key players, and where to watch."
+            "title": "Miami Edges Texas A&M in Historic CFP Battle",
+            "description": "Relive the defensive masterclass as Miami defeats Texas A&M 3-0 in a windy, record-setting College Football Playoff first-round clash."
         },
         {
-            "keyword": "Kentucky Wildcats men's basketball action shot",
-            "text": "The Wildcats came in looking to set the tone early, pushing the pace with aggressive defense and fast-break opportunities.",
+            "keyword": "Rueben Bain Jr blocked field goal Texas A&M",
+            "text": "Defense was the story from the start. Miami's Rueben Bain Jr. came up huge in the first half, blocking a 22-yard field goal to keep the game scoreless.",
+            "duration": 8
+        },
+        {
+            "keyword": "Texas A&M fake punt fail 2025",
+            "text": "Desperate for momentum, coach Mike Elko attempted a risky fake punt pass before halftime, but the play fell incomplete, leaving both teams knotted at zero.",
             "duration": 7
         },
         {
-            "keyword": "St John's Red Storm basketball game action",
-            "text": "St. John’s answered with physical play and disciplined offense, showing why they’ve been one of the most talked-about teams this season.",
+            "keyword": "Malachi Toney Miami punt return 55 yards",
+            "text": "Special teams finally sparked the Hurricanes. Malachi Toney’s sensational 55-yard punt return flipped the field and put Miami in scoring position.",
             "duration": 7
         },
         {
-            "keyword": "Rick Pitino coaching basketball sideline",
-            "text": "Legendary coach Rick Pitino brought his trademark intensity, keeping his Red Storm squad locked in on both ends of the floor.",
+            "keyword": "Miami field goal celebration Carter Davis",
+            "text": "The deadlock finally broke in the third quarter when Carter Davis nailed a 21-yard field goal, the only points in a game plagued by high winds.",
+            "duration": 8
+        },
+        {
+            "keyword": "Bryce Fitzgerald interception Marcel Reed",
+            "text": "Miami’s secondary sealed the deal as true freshman Bryce Fitzgerald intercepted Marcel Reed, thwarting the Aggies' best chance at a comeback.",
+            "duration": 8
+        },
+        {
+            "keyword": "Le'Veon Moss injury Texas A&M",
+            "text": "It was a tough day for the Aggies' offense, compounded by star running back Le'Veon Moss being forced out of the game with a late injury.",
             "duration": 7
         },
         {
-            "keyword": "Bryce Hopkins college basketball highlight",
-            "text": "Bryce Hopkins made his presence felt, delivering key buckets and energy that kept the momentum swinging.",
-            "duration": 7
-        },
-        {
-            "keyword": "Kentucky Wildcats basketball defense crowd",
-            "text": "Kentucky’s defense stepped up, forcing tough shots and turning stops into scoring chances.",
-            "duration": 7
-        },
-        {
-            "keyword": "St John's Red Storm basketball crowd reaction",
-            "text": "Every possession mattered as the Red Storm crowd reacted to each run in this back-and-forth battle.",
-            "duration": 7
-        },
-        {
-            "keyword": "college basketball arena crowd night game",
-            "text": "If you’re wondering where to watch Kentucky Wildcats versus St. John’s Red Storm, check official TV listings or streaming platforms carrying college basketball.",
+            "keyword": "Miami Hurricanes celebration CFP victory",
+            "text": "With a 3-0 victory, Miami survives and advances to the quarterfinals, while the Aggies' historic season comes to a heartbreaking end.",
             "duration": 8
         }
     ]
