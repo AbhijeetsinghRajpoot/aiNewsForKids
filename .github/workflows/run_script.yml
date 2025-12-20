@@ -28,15 +28,12 @@ jobs:
         run: |
           pip install \
             moviepy==1.0.3 \
-            pillow<10 \
+            "pillow<10" \
             decorator==4.4.2 \
             requests \
             numpy \
             openai \
-            elevenlabs \
-            google-api-python-client \
-            google-auth-oauthlib \
-            google-auth-httplib2
+            elevenlabs
 
       - name: Create YouTube API Credential Files
         run: |
