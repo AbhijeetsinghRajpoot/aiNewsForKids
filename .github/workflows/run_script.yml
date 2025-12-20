@@ -33,7 +33,10 @@ jobs:
             requests \
             numpy \
             openai \
-            elevenlabs
+            elevenlabs \
+            google-api-python-client \
+            google-auth-oauthlib \
+            google-auth-httplib2
 
       - name: Create YouTube API Credential Files
         run: |
