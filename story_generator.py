@@ -1,6 +1,5 @@
 import os
 import requests
-import numpy as np
 from moviepy.editor import (
     ImageClip,
     AudioFileClip,
@@ -50,13 +49,14 @@ def generate_openai_image(keyword, folder):
     prompt = (
         f"Photorealistic basketball scene, {keyword}, "
         "generic players, no logos, no text, no real people, "
-        "cinematic lighting, professional sports photography"
+        "cinematic lighting, professional sports photography, "
+        "subject centered, safe margins for vertical video"
     )
 
     result = openai_client.images.generate(
-        model="gpt-image-1-mini",
+        model="gpt-image-1",     # ✅ correct model
         prompt=prompt,
-        size="1024x1792"
+        size="1024x1536"         # ✅ supported vertical size
     )
 
     img_url = result.data[0].url
@@ -71,9 +71,7 @@ def generate_openai_image(keyword, folder):
 # ---------- AUTO ZOOM EFFECT ----------
 
 def ken_burns_effect(clip, zoom_factor=1.12):
-    """
-    Smooth zoom-in over time to simulate video motion
-    """
+    """Smooth zoom-in over time"""
     return clip.resize(
         lambda t: 1 + (zoom_factor - 1) * (t / clip.duration)
     )
@@ -89,7 +87,7 @@ def create_video(storyboard, client):
         temp_img_folder = f"./temp_{i}"
         os.makedirs(temp_img_folder, exist_ok=True)
 
-        # ---------- IMAGE SELECTION ----------
+        # ---------- IMAGE ----------
         img_path = download_pixabay_image(entry["keyword"], temp_img_folder)
 
         if img_path is None:
@@ -97,7 +95,6 @@ def create_video(storyboard, client):
             img_path = generate_openai_image(entry["keyword"], temp_img_folder)
 
         if img_path is None:
-            print(f"No image for '{entry['keyword']}', skipping...")
             continue
 
         # ---------- AUDIO ----------
@@ -114,27 +111,26 @@ def create_video(storyboard, client):
         audio_clip = AudioFileClip(audio_path)
 
         if total_duration + audio_clip.duration > MAX_SHORT_DURATION:
-            remaining = MAX_SHORT_DURATION - total_duration
-            audio_clip = audio_clip.subclip(0, remaining)
-            total_duration += remaining
-        else:
-            total_duration += audio_clip.duration
+            audio_clip = audio_clip.subclip(
+                0, MAX_SHORT_DURATION - total_duration
+            )
 
-        # ---------- VIDEO CLIP ----------
+        total_duration += audio_clip.duration
+
+        # ---------- VIDEO ----------
         img_clip = ImageClip(img_path).set_duration(audio_clip.duration)
 
         img_clip = img_clip.resize(height=SHORT_HEIGHT)
         img_clip = img_clip.crop(
             x_center=img_clip.w / 2,
-            y_center=SHORT_HEIGHT / 2,
+            y_center=SHORT_HEIGHT * 0.45,  # slight upward bias
             width=SHORT_WIDTH,
             height=SHORT_HEIGHT
         )
 
-        # Apply auto zoom
         img_clip = ken_burns_effect(img_clip)
-
         img_clip = img_clip.set_audio(audio_clip)
+
         video_segments.append(img_clip)
 
         if total_duration >= MAX_SHORT_DURATION:
@@ -144,13 +140,12 @@ def create_video(storyboard, client):
         raise ValueError("No video segments created.")
 
     final_video = concatenate_videoclips(video_segments, method="compose")
-    output_name = "final_video.mp4"
 
     final_video.write_videofile(
-        output_name,
+        "final_video.mp4",
         fps=24,
         codec="libx264",
         audio_codec="aac"
     )
 
-    return output_name
+    return "final_video.mp4"
