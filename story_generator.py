@@ -1,12 +1,12 @@
 import os
 import requests
 import numpy as np
-from moviepy.editor import (
-    ImageClip,
-    AudioFileClip,
-    concatenate_videoclips
-)
+from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
 from openai import OpenAI
+
+# ---------- ENV KEYS ----------
+PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
+openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ---------- CONSTANTS ----------
 SHORT_WIDTH = 720
