@@ -1,19 +1,24 @@
 import os
 import requests
 import numpy as np
-from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+from moviepy.editor import (
+    ImageClip,
+    AudioFileClip,
+    concatenate_videoclips
+)
 from openai import OpenAI
 
-# ---------- ENV KEYS ----------
+# ---------- ENVIRONMENT VARIABLES ----------
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
-openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Initialize OpenAI client
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # ---------- CONSTANTS ----------
 SHORT_WIDTH = 720
 SHORT_HEIGHT = 1280
 MAX_SHORT_DURATION = 59
-
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # ---------- IMAGE SOURCES ----------
 
@@ -43,7 +48,7 @@ def download_pixabay_image(keyword, folder):
 
 def generate_openai_image(keyword, folder):
     prompt = (
-        f"Photorealistic football scene, {keyword}, "
+        f"Photorealistic basketball scene, {keyword}, "
         "generic players, no logos, no text, no real people, "
         "cinematic lighting, professional sports photography"
     )
