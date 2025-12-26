@@ -5,22 +5,30 @@ from moviepy.editor import (
     AudioFileClip,
     concatenate_videoclips
 )
-from openai import OpenAI
+from TTS.api import TTS
+
 
 # ---------- ENVIRONMENT VARIABLES ----------
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# Initialize OpenAI client
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
+if not PIXABAY_API_KEY:
+    raise RuntimeError("❌ PIXABAY_API_KEY is not set")
+
+
+# ---------- INITIALIZE COQUI TTS ----------
+tts_client = TTS(
+    model_name="tts_models/en/ljspeech/fast_pitch",
+    gpu=False  # REQUIRED for GitHub Actions
+)
+
 
 # ---------- CONSTANTS ----------
 SHORT_WIDTH = 720
 SHORT_HEIGHT = 1280
 MAX_SHORT_DURATION = 59
 
-# ---------- IMAGE SOURCES ----------
 
+# ---------- IMAGE SOURCE (PIXABAY ONLY) ----------
 def download_pixabay_image(keyword, folder):
     url = "https://pixabay.com/api/"
     params = {
@@ -32,7 +40,7 @@ def download_pixabay_image(keyword, folder):
         "per_page": 3
     }
 
-    r = requests.get(url, params=params).json()
+    r = requests.get(url, params=params, timeout=10).json()
     if "hits" not in r or not r["hits"]:
         return None
 
@@ -40,46 +48,20 @@ def download_pixabay_image(keyword, folder):
     img_path = os.path.join(folder, "pixabay.jpg")
 
     with open(img_path, "wb") as f:
-        f.write(requests.get(img_url).content)
-
-    return img_path
-
-
-def generate_openai_image(keyword, folder):
-    prompt = (
-        f"Photorealistic basketball scene, {keyword}, "
-        "generic players, no logos, no text, no real people, "
-        "cinematic lighting, professional sports photography, "
-        "subject centered, safe margins for vertical video"
-    )
-
-    result = openai_client.images.generate(
-        model="gpt-image-1",     # ✅ correct model
-        prompt=prompt,
-        size="1024x1536"         # ✅ supported vertical size
-    )
-
-    img_url = result.data[0].url
-    img_path = os.path.join(folder, "ai.jpg")
-
-    with open(img_path, "wb") as f:
-        f.write(requests.get(img_url).content)
+        f.write(requests.get(img_url, timeout=10).content)
 
     return img_path
 
 
 # ---------- AUTO ZOOM EFFECT ----------
-
 def ken_burns_effect(clip, zoom_factor=1.12):
-    """Smooth zoom-in over time"""
     return clip.resize(
         lambda t: 1 + (zoom_factor - 1) * (t / clip.duration)
     )
 
 
 # ---------- MAIN VIDEO FUNCTION ----------
-
-def create_video(storyboard, client):
+def create_video(storyboard, tts_client=tts_client):
     video_segments = []
     total_duration = 0
 
@@ -89,24 +71,17 @@ def create_video(storyboard, client):
 
         # ---------- IMAGE ----------
         img_path = download_pixabay_image(entry["keyword"], temp_img_folder)
-
         if img_path is None:
-            print("Pixabay failed, generating AI image...")
-            img_path = generate_openai_image(entry["keyword"], temp_img_folder)
-
-        if img_path is None:
+            print(f"⚠️ No image found for: {entry['keyword']}")
             continue
 
-        # ---------- AUDIO ----------
-        audio_path = f"audio_{i}.mp3"
-        audio_gen = client.text_to_speech.convert(
-            text=entry["text"],
-            voice_id="JBFqnCBsd6RMkjVDRZzb"
-        )
+        # ---------- AUDIO (COQUI TTS) ----------
+        audio_path = f"audio_{i}.wav"
 
-        with open(audio_path, "wb") as f:
-            for chunk in audio_gen:
-                f.write(chunk)
+        tts_client.tts_to_file(
+            text=entry["text"],
+            file_path=audio_path
+        )
 
         audio_clip = AudioFileClip(audio_path)
 
@@ -123,7 +98,7 @@ def create_video(storyboard, client):
         img_clip = img_clip.resize(height=SHORT_HEIGHT)
         img_clip = img_clip.crop(
             x_center=img_clip.w / 2,
-            y_center=SHORT_HEIGHT * 0.45,  # slight upward bias
+            y_center=SHORT_HEIGHT * 0.45,
             width=SHORT_WIDTH,
             height=SHORT_HEIGHT
         )
@@ -137,7 +112,7 @@ def create_video(storyboard, client):
             break
 
     if not video_segments:
-        raise ValueError("No video segments created.")
+        raise ValueError("❌ No video segments created.")
 
     final_video = concatenate_videoclips(video_segments, method="compose")
 
