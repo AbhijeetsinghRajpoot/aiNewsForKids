@@ -24,10 +24,20 @@ jobs:
           sudo apt-get install -y ffmpeg imagemagick
           sudo sed -i 's/policy domain="path" rights="none" pattern="@\*"/policy domain="path" rights="read|write" pattern="@\*"/g' /etc/ImageMagick-6/policy.xml
 
-      - name: Install Python Dependencies
+      - name: Clear pip cache (IMPORTANT)
+        run: |
+          pip cache purge
+          rm -rf ~/.cache/pip
+
+      - name: Install CPU-only PyTorch
+        run: |
+          pip install --no-cache-dir torch==2.1.0+cpu torchaudio==2.1.0+cpu \
+            --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install Python Dependencies (no cache)
         run: |
           pip install --upgrade pip
-          pip install \
+          pip install --no-cache-dir \
             moviepy==1.0.3 \
             "pillow<10" \
             decorator==4.4.2 \
