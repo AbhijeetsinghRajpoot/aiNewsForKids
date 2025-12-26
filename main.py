@@ -1,20 +1,16 @@
 import os
-from elevenlabs.client import ElevenLabs
+from TTS.api import TTS
+
 import storyboard_data
 import story_generator
 import youtube_uploader
 
 
-# ---------- ENV VALIDATION ----------
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-
-if not ELEVENLABS_API_KEY:
-    raise RuntimeError("❌ ELEVENLABS_API_KEY is not set in environment variables")
-
-
-# ---------- INITIALIZE CLIENTS ----------
-el_client = ElevenLabs(
-    api_key=ELEVENLABS_API_KEY
+# ---------- INITIALIZE COQUI TTS ----------
+# Runs locally, no API key required
+tts_client = TTS(
+    model_name="tts_models/en/ljspeech/fast_pitch",
+    gpu=False  # REQUIRED for GitHub Actions
 )
 
 
@@ -32,7 +28,7 @@ def run_automation():
     print("Step 2: Generating Video...")
     video_file = story_generator.create_video(
         storyboard=storyboard,
-        client=el_client
+        tts_client=tts_client   # 🔁 replaced ElevenLabs client
     )
 
     if not video_file or not os.path.exists(video_file):
