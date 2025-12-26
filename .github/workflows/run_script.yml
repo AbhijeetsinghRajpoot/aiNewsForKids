@@ -26,14 +26,14 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
+          pip install --upgrade pip
           pip install \
             moviepy==1.0.3 \
             "pillow<10" \
             decorator==4.4.2 \
             requests \
             numpy \
-            openai \
-            elevenlabs \
+            TTS \
             google-api-python-client \
             google-auth-oauthlib \
             google-auth-httplib2
@@ -46,6 +46,4 @@ jobs:
       - name: Run Automation Script
         env:
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         run: python main.py
