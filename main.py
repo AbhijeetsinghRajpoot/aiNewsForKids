@@ -20,7 +20,7 @@ def run_automation():
     video_title = (
         first_scene.get("title")
         or first_scene.get("keyword", "Trending Shorts")
-    ) + " #Shorts"
+    )
 
     video_description = (
         first_scene.get("description", "Latest update")
@@ -40,9 +40,9 @@ def run_automation():
     # -----------------------------
     print("STEP 3: Uploading to YouTube...")
     youtube_uploader.upload_to_youtube(
-        video_path=video_file,
-        title=video_title,
-        description=video_description
+        video_file,
+        video_title,
+        video_description
     )
 
     print("AUTOMATION COMPLETED SUCCESSFULLY 🚀")
