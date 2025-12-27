@@ -8,14 +8,22 @@ from moviepy.editor import (
     concatenate_videoclips
 )
 from TTS.api import TTS
+from google_images_search import GoogleImagesSearch
 
 # ---------- ENVIRONMENT VARIABLES ----------
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_CX = os.getenv("GOOGLE_CX")
 
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
-# ---------- XTTS SPEAKER VOICE (AUTO-DOWNLOAD) ----------
+# ---------- GOOGLE IMAGE SEARCH (OPTIONAL) ----------
+gis = None
+if GOOGLE_API_KEY and GOOGLE_CX:
+    gis = GoogleImagesSearch(GOOGLE_API_KEY, GOOGLE_CX)
+
+# ---------- XTTS SPEAKER VOICE ----------
 SPEAKER_WAV = "assets/voice.wav"
 
 def ensure_speaker_wav():
@@ -73,7 +81,7 @@ def download_pixabay_video(keyword, folder):
 
         return path
     except Exception as e:
-        print("Video download failed:", e)
+        print("Pixabay video failed:", e)
         return None
 
 # ---------- PIXABAY IMAGE ----------
@@ -101,7 +109,37 @@ def download_pixabay_image(keyword, folder):
 
         return path
     except Exception as e:
-        print("Image download failed:", e)
+        print("Pixabay image failed:", e)
+        return None
+
+# ---------- GOOGLE IMAGE FALLBACK ----------
+def download_google_image(keyword, folder):
+    if not gis:
+        return None
+
+    try:
+        gis.search({
+            "q": keyword,
+            "num": 1,
+            "imgType": "photo",
+            "imgSize": "large",
+            "safe": "active"
+        })
+
+        results = gis.results()
+        if not results:
+            return None
+
+        img = results[0]
+        img.download(folder)
+
+        downloaded = os.path.join(folder, img.filename)
+        path = os.path.join(folder, "google.jpg")
+        os.rename(downloaded, path)
+
+        return path
+    except Exception as e:
+        print("Google image failed:", e)
         return None
 
 # ---------- TEXT GRAPHIC FALLBACK ----------
@@ -145,7 +183,7 @@ def create_video(storyboard):
         folder = f"./temp_{i}"
         os.makedirs(folder, exist_ok=True)
 
-        # ---------- AUDIO (XTTS – HINGLISH SAFE) ----------
+        # ---------- AUDIO ----------
         audio_path = f"audio_{i}.wav"
         tts_client.tts_to_file(
             text=entry["text"],
@@ -164,15 +202,16 @@ def create_video(storyboard):
         duration = audio_clip.duration
         total_duration += duration
 
-        # ---------- VISUAL ----------
         clip = None
 
         for kw in [entry["keyword"]] + KEYWORD_FALLBACKS:
+            # 1️⃣ Pixabay video
             video_path = download_pixabay_video(kw, folder)
             if video_path:
                 clip = normalize_video(video_path, duration)
                 break
 
+            # 2️⃣ Pixabay image
             image_path = download_pixabay_image(kw, folder)
             if image_path:
                 safe = os.path.join(folder, "safe.jpg")
@@ -181,6 +220,16 @@ def create_video(storyboard):
                 clip = ken_burns_effect(clip)
                 break
 
+            # 3️⃣ Google image fallback
+            google_image = download_google_image(kw, folder)
+            if google_image:
+                safe = os.path.join(folder, "safe_google.jpg")
+                normalize_image(google_image, safe)
+                clip = ImageClip(safe).set_duration(duration)
+                clip = ken_burns_effect(clip)
+                break
+
+        # 4️⃣ Text fallback
         if not clip:
             fallback = create_text_graphic(entry["text"], folder)
             clip = ImageClip(fallback).set_duration(duration)
