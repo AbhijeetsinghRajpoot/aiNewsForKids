@@ -15,14 +15,21 @@ PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
-# ---------- XTTS SPEAKER VOICE (MANDATORY) ----------
+# ---------- XTTS SPEAKER VOICE (AUTO-DOWNLOAD) ----------
 SPEAKER_WAV = "assets/voice.wav"
 
-if not os.path.exists(SPEAKER_WAV):
-    raise RuntimeError(
-        "XTTS requires a speaker WAV file. "
-        "Please add a voice file at assets/voice.wav"
-    )
+def ensure_speaker_wav():
+    os.makedirs("assets", exist_ok=True)
+
+    if not os.path.exists(SPEAKER_WAV):
+        print("XTTS speaker voice not found. Downloading default voice...")
+        url = "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0001.wav"
+        r = requests.get(url, timeout=20)
+        r.raise_for_status()
+        with open(SPEAKER_WAV, "wb") as f:
+            f.write(r.content)
+
+ensure_speaker_wav()
 
 # ---------- INITIALIZE COQUI XTTS ----------
 tts_client = TTS(
