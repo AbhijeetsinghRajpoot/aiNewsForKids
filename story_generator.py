@@ -134,7 +134,8 @@ def create_video(storyboard):
         tts_client.tts_to_file(
             text=entry["text"],
             file_path=audio_path,
-            language="en"
+            language="en",
+            speaker="random"
         )
 
         audio_clip = AudioFileClip(audio_path)
