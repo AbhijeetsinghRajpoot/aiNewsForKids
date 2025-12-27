@@ -1,8 +1,9 @@
 import os
 import requests
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from moviepy.editor import (
     ImageClip,
+    VideoFileClip,
     AudioFileClip,
     concatenate_videoclips
 )
@@ -14,7 +15,7 @@ PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
-# ---------- INITIALIZE COQUI TTS (CPU ONLY) ----------
+# ---------- INITIALIZE COQUI TTS ----------
 tts_client = TTS(
     model_name="tts_models/en/ljspeech/fast_pitch",
     gpu=False
@@ -25,7 +26,41 @@ SHORT_WIDTH = 720
 SHORT_HEIGHT = 1280
 MAX_SHORT_DURATION = 59
 
-# ---------- IMAGE SOURCE (PIXABAY) ----------
+# ---------- KEYWORD FALLBACKS ----------
+KEYWORD_FALLBACKS = [
+    "cricket stadium crowd",
+    "sports crowd cheering",
+    "stadium lights night",
+    "breaking news background"
+]
+
+# ---------- PIXABAY VIDEO ----------
+def download_pixabay_video(keyword, folder):
+    url = "https://pixabay.com/api/videos/"
+    params = {
+        "key": PIXABAY_API_KEY,
+        "q": keyword,
+        "per_page": 3,
+        "safesearch": "true"
+    }
+
+    try:
+        r = requests.get(url, params=params, timeout=10).json()
+        if "hits" not in r or not r["hits"]:
+            return None
+
+        video_url = r["hits"][0]["videos"]["large"]["url"]
+        path = os.path.join(folder, "raw.mp4")
+
+        with open(path, "wb") as f:
+            f.write(requests.get(video_url, timeout=15).content)
+
+        return path
+    except Exception as e:
+        print("Video download failed:", e)
+        return None
+
+# ---------- PIXABAY IMAGE ----------
 def download_pixabay_image(keyword, folder):
     url = "https://pixabay.com/api/"
     params = {
@@ -43,30 +78,47 @@ def download_pixabay_image(keyword, folder):
             return None
 
         img_url = r["hits"][0]["largeImageURL"]
-        img_path = os.path.join(folder, "raw.jpg")
+        path = os.path.join(folder, "raw.jpg")
 
-        img_data = requests.get(img_url, timeout=10).content
-        with open(img_path, "wb") as f:
-            f.write(img_data)
+        with open(path, "wb") as f:
+            f.write(requests.get(img_url, timeout=10).content)
 
-        return img_path
-
+        return path
     except Exception as e:
         print("Image download failed:", e)
         return None
 
-# ---------- IMAGE NORMALIZATION (CRASH FIX) ----------
-def normalize_image(input_path, output_path, size=(720, 1280)):
+# ---------- TEXT GRAPHIC (FINAL FALLBACK) ----------
+def create_text_graphic(text, folder):
+    img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (10, 10, 10))
+    draw = ImageDraw.Draw(img)
+
+    font = ImageFont.load_default()
+    wrapped = "\n".join(text[i:i+30] for i in range(0, len(text), 30))
+
+    draw.text((40, 400), wrapped, fill="white", font=font, spacing=10)
+
+    path = os.path.join(folder, "fallback.jpg")
+    img.save(path, "JPEG", quality=95)
+    return path
+
+# ---------- IMAGE NORMALIZATION ----------
+def normalize_image(input_path, output_path):
     with Image.open(input_path) as img:
         img = img.convert("RGB")
-        img = img.resize(size, Image.Resampling.LANCZOS)
+        img = img.resize((SHORT_WIDTH, SHORT_HEIGHT), Image.Resampling.LANCZOS)
         img.save(output_path, "JPEG", quality=95)
 
-# ---------- AUTO ZOOM EFFECT ----------
-def ken_burns_effect(clip, zoom_factor=1.12):
-    return clip.resize(
-        lambda t: 1 + (zoom_factor - 1) * (t / clip.duration)
-    )
+# ---------- VIDEO NORMALIZATION ----------
+def normalize_video(path, duration):
+    clip = VideoFileClip(path).subclip(0, min(duration, VideoFileClip(path).duration))
+    clip = clip.resize(height=SHORT_HEIGHT)
+    clip = clip.crop(x_center=clip.w / 2, width=SHORT_WIDTH)
+    return clip
+
+# ---------- KEN BURNS ----------
+def ken_burns_effect(clip, zoom_factor=1.1):
+    return clip.resize(lambda t: 1 + (zoom_factor - 1) * (t / clip.duration))
 
 # ---------- MAIN VIDEO FUNCTION ----------
 def create_video(storyboard):
@@ -74,40 +126,42 @@ def create_video(storyboard):
     total_duration = 0
 
     for i, entry in enumerate(storyboard):
-        temp_img_folder = f"./temp_{i}"
-        os.makedirs(temp_img_folder, exist_ok=True)
-
-        # ---------- IMAGE ----------
-        raw_img = download_pixabay_image(entry["keyword"], temp_img_folder)
-        if not raw_img:
-            print("Skipping scene, no image:", entry["keyword"])
-            continue
-
-        safe_img = os.path.join(temp_img_folder, "safe.jpg")
-        normalize_image(raw_img, safe_img, size=(SHORT_WIDTH, SHORT_HEIGHT))
+        folder = f"./temp_{i}"
+        os.makedirs(folder, exist_ok=True)
 
         # ---------- AUDIO ----------
         audio_path = f"audio_{i}.wav"
-        tts_client.tts_to_file(
-            text=entry["text"],
-            file_path=audio_path
-        )
-
+        tts_client.tts_to_file(text=entry["text"], file_path=audio_path)
         audio_clip = AudioFileClip(audio_path)
 
         if total_duration + audio_clip.duration > MAX_SHORT_DURATION:
-            audio_clip = audio_clip.subclip(
-                0, MAX_SHORT_DURATION - total_duration
-            )
+            audio_clip = audio_clip.subclip(0, MAX_SHORT_DURATION - total_duration)
 
-        total_duration += audio_clip.duration
+        duration = audio_clip.duration
+        total_duration += duration
 
-        # ---------- VIDEO ----------
-        img_clip = ImageClip(safe_img).set_duration(audio_clip.duration)
-        img_clip = ken_burns_effect(img_clip)
-        img_clip = img_clip.set_audio(audio_clip)
+        # ---------- VISUAL FETCH ----------
+        visual = None
 
-        video_segments.append(img_clip)
+        for kw in [entry["keyword"]] + KEYWORD_FALLBACKS:
+            visual = download_pixabay_video(kw, folder)
+            if visual:
+                clip = normalize_video(visual, duration)
+                break
+
+            visual = download_pixabay_image(kw, folder)
+            if visual:
+                safe = os.path.join(folder, "safe.jpg")
+                normalize_image(visual, safe)
+                clip = ImageClip(safe).set_duration(duration)
+                clip = ken_burns_effect(clip)
+                break
+        else:
+            fallback = create_text_graphic(entry["text"], folder)
+            clip = ImageClip(fallback).set_duration(duration)
+
+        clip = clip.set_audio(audio_clip)
+        video_segments.append(clip)
 
         if total_duration >= MAX_SHORT_DURATION:
             break
@@ -115,11 +169,10 @@ def create_video(storyboard):
     if not video_segments:
         raise RuntimeError("No video segments created")
 
-    final_video = concatenate_videoclips(video_segments, method="compose")
-
-    final_video.write_videofile(
+    final = concatenate_videoclips(video_segments, method="compose")
+    final.write_videofile(
         "final_video.mp4",
-        fps=24,
+        fps=30,
         codec="libx264",
         audio_codec="aac"
     )
