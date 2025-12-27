@@ -3,7 +3,7 @@ name: Run Story Generator
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # Runs daily at 12:00 AM UTC
 
 jobs:
   build:
@@ -17,21 +17,33 @@ jobs:
       COQUI_TOS_AGREED: "1"
 
     steps:
+      # -----------------------------
+      # Checkout Code
+      # -----------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # -----------------------------
+      # Set up Python with caching
+      # -----------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
+      # -----------------------------
+      # System Dependencies
+      # -----------------------------
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
           sudo sed -i 's/policy domain="path" rights="none"/policy domain="path" rights="read|write"/g' /etc/ImageMagick-6/policy.xml
 
+      # -----------------------------
+      # Install CPU-only PyTorch
+      # -----------------------------
       - name: Install CPU-only PyTorch
         run: |
           pip install --no-cache-dir \
@@ -39,27 +51,25 @@ jobs:
             torchaudio==2.1.0+cpu \
             --index-url https://download.pytorch.org/whl/cpu
 
+      # -----------------------------
+      # Install Python dependencies from requirements.txt
+      # -----------------------------
       - name: Install Python dependencies
         run: |
           pip install --upgrade pip
-          pip install --no-cache-dir transformers==4.36.2
-          pip install --no-cache-dir \
-            moviepy==1.0.3 \
-            "pillow<10" \
-            decorator==4.4.2 \
-            requests \
-            numpy \
-            TTS \
-            google-images-search \
-            google-api-python-client \
-            google-auth-oauthlib \
-            google-auth-httplib2
+          pip install --no-cache-dir -r requirements.txt
 
+      # -----------------------------
+      # Create YouTube credential files
+      # -----------------------------
       - name: Create YouTube credential files
         run: |
           echo '${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}' > client_secret.json
           echo '${{ secrets.YOUTUBE_TOKEN_JSON }}' > token.json
 
+      # -----------------------------
+      # Run automation script
+      # -----------------------------
       - name: Run automation script
         run: |
           python main.py
