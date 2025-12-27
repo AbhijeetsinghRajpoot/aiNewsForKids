@@ -15,9 +15,9 @@ PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
-# ---------- INITIALIZE COQUI TTS ----------
+# ---------- INITIALIZE COQUI XTTS (HINGLISH) ----------
 tts_client = TTS(
-    model_name="tts_models/en/ljspeech/fast_pitch",
+    model_name="tts_models/multilingual/multi-dataset/xtts_v2",
     gpu=False
 )
 
@@ -28,10 +28,10 @@ MAX_SHORT_DURATION = 59
 
 # ---------- KEYWORD FALLBACKS ----------
 KEYWORD_FALLBACKS = [
-    "cricket stadium crowd",
-    "sports crowd cheering",
-    "stadium lights night",
-    "breaking news background"
+    "breaking news background",
+    "sports stadium crowd",
+    "cricket crowd cheering",
+    "news studio background"
 ]
 
 # ---------- PIXABAY VIDEO ----------
@@ -88,14 +88,13 @@ def download_pixabay_image(keyword, folder):
         print("Image download failed:", e)
         return None
 
-# ---------- TEXT GRAPHIC (FINAL FALLBACK) ----------
+# ---------- TEXT GRAPHIC FALLBACK ----------
 def create_text_graphic(text, folder):
     img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (10, 10, 10))
     draw = ImageDraw.Draw(img)
-
     font = ImageFont.load_default()
-    wrapped = "\n".join(text[i:i+30] for i in range(0, len(text), 30))
 
+    wrapped = "\n".join(text[i:i+28] for i in range(0, len(text), 28))
     draw.text((40, 400), wrapped, fill="white", font=font, spacing=10)
 
     path = os.path.join(folder, "fallback.jpg")
@@ -111,16 +110,17 @@ def normalize_image(input_path, output_path):
 
 # ---------- VIDEO NORMALIZATION ----------
 def normalize_video(path, duration):
-    clip = VideoFileClip(path).subclip(0, min(duration, VideoFileClip(path).duration))
+    clip = VideoFileClip(path)
+    clip = clip.subclip(0, min(duration, clip.duration))
     clip = clip.resize(height=SHORT_HEIGHT)
     clip = clip.crop(x_center=clip.w / 2, width=SHORT_WIDTH)
     return clip
 
-# ---------- KEN BURNS ----------
+# ---------- KEN BURNS EFFECT ----------
 def ken_burns_effect(clip, zoom_factor=1.1):
     return clip.resize(lambda t: 1 + (zoom_factor - 1) * (t / clip.duration))
 
-# ---------- MAIN VIDEO FUNCTION ----------
+# ---------- MAIN VIDEO CREATOR ----------
 def create_video(storyboard):
     video_segments = []
     total_duration = 0
@@ -129,34 +129,42 @@ def create_video(storyboard):
         folder = f"./temp_{i}"
         os.makedirs(folder, exist_ok=True)
 
-        # ---------- AUDIO ----------
+        # ---------- AUDIO (HINGLISH) ----------
         audio_path = f"audio_{i}.wav"
-        tts_client.tts_to_file(text=entry["text"], file_path=audio_path)
+        tts_client.tts_to_file(
+            text=entry["text"],
+            file_path=audio_path,
+            language="en"
+        )
+
         audio_clip = AudioFileClip(audio_path)
 
         if total_duration + audio_clip.duration > MAX_SHORT_DURATION:
-            audio_clip = audio_clip.subclip(0, MAX_SHORT_DURATION - total_duration)
+            audio_clip = audio_clip.subclip(
+                0, MAX_SHORT_DURATION - total_duration
+            )
 
         duration = audio_clip.duration
         total_duration += duration
 
-        # ---------- VISUAL FETCH ----------
-        visual = None
+        # ---------- VISUAL ----------
+        clip = None
 
         for kw in [entry["keyword"]] + KEYWORD_FALLBACKS:
-            visual = download_pixabay_video(kw, folder)
-            if visual:
-                clip = normalize_video(visual, duration)
+            video_path = download_pixabay_video(kw, folder)
+            if video_path:
+                clip = normalize_video(video_path, duration)
                 break
 
-            visual = download_pixabay_image(kw, folder)
-            if visual:
+            image_path = download_pixabay_image(kw, folder)
+            if image_path:
                 safe = os.path.join(folder, "safe.jpg")
-                normalize_image(visual, safe)
+                normalize_image(image_path, safe)
                 clip = ImageClip(safe).set_duration(duration)
                 clip = ken_burns_effect(clip)
                 break
-        else:
+
+        if not clip:
             fallback = create_text_graphic(entry["text"], folder)
             clip = ImageClip(fallback).set_duration(duration)
 
