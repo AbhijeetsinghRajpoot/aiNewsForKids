@@ -3,14 +3,15 @@ name: Run Story Generator
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'   # Runs daily at 12:00 AM UTC
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -18,23 +19,37 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install System Dependencies
+      # -----------------------------
+      # System Dependencies
+      # -----------------------------
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
-          sudo sed -i 's/policy domain="path" rights="none" pattern="@\*"/policy domain="path" rights="read|write" pattern="@\*"/g' /etc/ImageMagick-6/policy.xml
+          sudo sed -i 's/policy domain="path" rights="none"/policy domain="path" rights="read|write"/g' /etc/ImageMagick-6/policy.xml
 
-      - name: Clear pip cache (IMPORTANT)
+      # -----------------------------
+      # Clean Python Cache (VERY IMPORTANT)
+      # -----------------------------
+      - name: Clear pip cache
         run: |
           pip cache purge
           rm -rf ~/.cache/pip
 
+      # -----------------------------
+      # Install CPU-only PyTorch (MANDATORY for TTS)
+      # -----------------------------
       - name: Install CPU-only PyTorch
         run: |
-          pip install --no-cache-dir torch==2.1.0+cpu torchaudio==2.1.0+cpu \
+          pip install --no-cache-dir \
+            torch==2.1.0+cpu \
+            torchaudio==2.1.0+cpu \
             --index-url https://download.pytorch.org/whl/cpu
 
-      - name: Install Python Dependencies (no cache)
+      # -----------------------------
+      # Python Dependencies
+      # -----------------------------
+      - name: Install Python dependencies
         run: |
           pip install --upgrade pip
           pip install --no-cache-dir \
@@ -48,12 +63,19 @@ jobs:
             google-auth-oauthlib \
             google-auth-httplib2
 
-      - name: Create YouTube API Credential Files
+      # -----------------------------
+      # YouTube Credentials
+      # -----------------------------
+      - name: Create YouTube credential files
         run: |
           echo '${{ secrets.YOUTUBE_CLIENT_SECRET_JSON }}' > client_secret.json
           echo '${{ secrets.YOUTUBE_TOKEN_JSON }}' > token.json
 
-      - name: Run Automation Script
+      # -----------------------------
+      # Run Automation
+      # -----------------------------
+      - name: Run automation script
         env:
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
-        run: python main.py
+        run: |
+          python main.py
