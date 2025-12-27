@@ -1,40 +1,40 @@
 def get_storyboard():
     return [
         {
-            "keyword": "Brook Lopez NBA Clippers",
-            "text": "Brook Lopez, the veteran center for the Los Angeles Clippers, made headlines in the NBA with a historic performance that basketball fans are talking about today.",
+            "keyword": "Galwan Valley Ladakh mountains",
+            "text": "Battle of Galwan Indian history ka ek aisa chapter hai jo hamesha yaad rakha jaayega. Ye kahani hai bravery, sacrifice aur deshbhakti ki.",
             "duration": 4,
-            "title": "Brook Lopez Latest News",
-            "description": "Brook Lopez hits career-high nine three-pointers for the Clippers"
+            "title": "Battle of Galwan Movie Update",
+            "description": "Salman Khan ki upcoming patriotic film Battle of Galwan par latest update"
         },
         {
-            "keyword": "Brook Lopez three pointers",
-            "text": "In a recent game against the Portland Trail Blazers, Brook Lopez scored an impressive 31 points and made a career-high nine three-pointers, a remarkable feat for a big man in the NBA. 0",
+            "keyword": "Indian Army soldiers Ladakh",
+            "text": "15 June 2020 ko Ladakh ki Galwan Valley mein Indian aur Chinese troops ke beech ek violent face to face clash hua tha, jahan Indian soldiers ne extraordinary courage dikhaya.",
             "duration": 6
         },
         {
-            "keyword": "Los Angeles Clippers Harden Leonard",
-            "text": "The Clippers won the game 119-103, with James Harden and Kawhi Leonard also contributing big numbers, helping the team secure their third straight win of the season. 1",
-            "duration": 5
-        },
-        {
-            "keyword": "Brook Lopez shooting highlights",
-            "text": "Lopez's ability to hit long range shots at his age makes him one of the most unique big men in the league, stretching the floor and keeping defenses honest. 2",
-            "duration": 5
-        },
-        {
-            "keyword": "NBA Clippers bench veteran",
-            "text": "The 37-year-old veteran signed a two-year deal with the Clippers in the 2025 offseason, bringing experience and leadership to a young team fighting for more consistency this season. 3",
-            "duration": 5
-        },
-        {
-            "keyword": "NBA career highlights Brook Lopez",
-            "text": "Lopez has had a long NBA career, known for his shot blocking, basketball IQ, and now his surprising volume from three-point range, making this performance even more impressive. 4",
+            "keyword": "Indian Army officer salute",
+            "text": "Is clash mein 20 Indian soldiers shaheed hue, jisme commanding officer Colonel Bikkumalla Santosh Babu bhi shaamil the, jinhone apni leadership se desh ko garv mehsoos karaya.",
             "duration": 6
         },
         {
-            "keyword": "Clippers team celebration",
-            "text": "With his recent hot shooting, Brook Lopez continues to be a key piece for the Clippers as they look to build momentum in the tough 2025-26 NBA season.",
+            "keyword": "Battle of Galwan movie teaser poster",
+            "text": "Ab isi real life incident par ek badi Bollywood film ban rahi hai jiska naam hai Battle of Galwan, jiska teaser recently launch kiya gaya hai.",
             "duration": 5
+        },
+        {
+            "keyword": "Salman Khan army uniform patriotic film",
+            "text": "Is movie mein Salman Khan Colonel Bikkumalla Santosh Babu ka role play kar rahe hain, jo Galwan clash ke dauraan Indian Army unit ko lead kar rahe the.",
+            "duration": 6
+        },
+        {
+            "keyword": "Indian Army training soldiers",
+            "text": "Ye film sirf action nahi balki discipline, sacrifice aur Indian Armed Forces ke spirit ko screen par dikhane ka ek tribute hai.",
+            "duration": 5
+        },
+        {
+            "keyword": "Indian Army tribute martyrs",
+            "text": "Battle of Galwan 2026 mein release hone ki ummeed hai, aur ye movie un jawaanon ko tribute degi jinhone desh ke liye apni jaan qurbaan kar di.",
+            "duration": 6
         }
     ]
