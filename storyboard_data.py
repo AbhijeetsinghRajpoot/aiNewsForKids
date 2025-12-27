@@ -2,66 +2,60 @@ def get_storyboard():
     return [
         {
             "keyword": "Penn State football stadium crowd",
-            "identity_keyword": "Penn State Nittany Lions",
+            "identity_keyword": "Penn State Nittany Lions vs Clemson Tigers",
             "text": "The Nittany Lions are ready to face the Clemson Tigers in an exciting clash of college football giants.",
-            "duration": 5,
-            "title": "Penn State vs Clemson | College Football Highlights",
-            "description": "Watch Penn State take on Clemson with live scores, game updates, and player highlights. #PSU #Clemson #CollegeFootball"
+            "duration": 4,
+            "title": "Penn State vs Clemson | College Football Highlights & News",
+            "description": "Watch Penn State vs Clemson live! Latest scores, game updates, and top player highlights.",
+            "visual_type": "emotion"   # Crowd video from Pixabay
         },
         {
-            "keyword": "Clemson Tigers football team action",
-            "identity_keyword": "Clemson Tigers",
+            "keyword": "Clemson football team attacking",
+            "identity_keyword": "Clemson Tigers football",
             "text": "Clemson’s Tigers are bringing their A-game this season, with strong performances from their key players like Kaytron Allen.",
             "duration": 5,
-            "visual_type": "identity"
+            "visual_type": "identity"  # Google Image of Clemson players
         },
         {
-            "keyword": "college football fans cheering",
-            "identity_keyword": None,
-            "text": "Fans are flocking to stadiums and streaming online, eager to see Penn State score big against Clemson.",
-            "duration": 4,
-            "visual_type": "video"
+            "keyword": "Penn State football team action",
+            "identity_keyword": "Penn State Nittany Lions",
+            "text": "Penn State players are on fire this season, showing great teamwork and determination against Clemson.",
+            "duration": 5,
+            "visual_type": "identity"  # Google Image of PSU players
         },
         {
-            "keyword": "Pinstripe Bowl football stadium",
-            "identity_keyword": None,
+            "keyword": "Pinstripe Bowl stadium crowd",
+            "identity_keyword": "Pinstripe Bowl Yankee Stadium",
             "text": "The historic Pinstripe Bowl, where Penn State and Clemson will clash, promises an unforgettable showdown.",
             "duration": 5,
-            "visual_type": "image"
+            "visual_type": "emotion"   # Video of stadium/crowd
         },
         {
-            "keyword": "Penn State coach football strategy",
-            "identity_keyword": "Penn State Coach",
+            "keyword": "Penn State coach strategizing",
+            "identity_keyword": "Penn State football coach",
             "text": "Penn State’s new coach is implementing fresh strategies to challenge Clemson’s defenses effectively.",
             "duration": 5,
-            "visual_type": "identity"
+            "visual_type": "identity"  # Image of coach
         },
         {
-            "keyword": "Clemson Tigers football game highlights",
-            "identity_keyword": "Terry Smith Clemson",
+            "keyword": "Clemson defensive coach Terry Smith",
+            "identity_keyword": "Terry Smith Clemson football",
             "text": "Clemson’s defensive coordinator Terry Smith has been crucial in keeping the Tigers competitive throughout the season.",
             "duration": 5,
-            "visual_type": "identity"
+            "visual_type": "identity"  # Image of coach
         },
         {
-            "keyword": "college football scoreboard",
-            "identity_keyword": None,
+            "keyword": "Football score update",
+            "identity_keyword": "Penn State vs Clemson scoreboard",
             "text": "As the game unfolds, fans can track the latest Penn State and Clemson scores and predictions for the winner.",
-            "duration": 4,
-            "visual_type": "video"
+            "duration": 5,
+            "visual_type": "emotion"   # Video of scoreboard/crowd
         },
         {
-            "keyword": "Penn State vs Clemson game today",
-            "identity_keyword": None,
+            "keyword": "Football live streaming",
+            "identity_keyword": "watch Penn State Nittany Lions vs Clemson Tigers live",
             "text": "Don’t miss a second of the action—watch Penn State Nittany Lions take on Clemson Tigers live today!",
-            "duration": 4,
-            "visual_type": "video"
-        },
-        {
-            "keyword": "college football fans celebration",
-            "identity_keyword": None,
-            "text": "Whether cheering for PSU or Clemson, college football fans are celebrating the excitement of this highly anticipated matchup.",
-            "duration": 4,
-            "visual_type": "video"
+            "duration": 5,
+            "visual_type": "emotion"   # Video of fans cheering / live action
         }
     ]
