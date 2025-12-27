@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
+    # ✅ GLOBAL ENV (IMPORTANT)
+    env:
+      PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+      COQUI_TOS_AGREED: "1"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,7 +34,7 @@ jobs:
           sudo sed -i 's/policy domain="path" rights="none"/policy domain="path" rights="read|write"/g' /etc/ImageMagick-6/policy.xml
 
       # -----------------------------
-      # Clean Python Cache (VERY IMPORTANT)
+      # Clean Python Cache
       # -----------------------------
       - name: Clear pip cache
         run: |
@@ -37,7 +42,7 @@ jobs:
           rm -rf ~/.cache/pip
 
       # -----------------------------
-      # Install CPU-only PyTorch (MANDATORY for TTS)
+      # Install CPU-only PyTorch
       # -----------------------------
       - name: Install CPU-only PyTorch
         run: |
@@ -75,7 +80,5 @@ jobs:
       # Run Automation
       # -----------------------------
       - name: Run automation script
-        env:
-          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
         run: |
           python main.py
