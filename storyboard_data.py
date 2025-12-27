@@ -1,61 +1,61 @@
 def get_storyboard():
     return [
         {
-            "keyword": "Penn State football stadium crowd",
-            "identity_keyword": "Penn State Nittany Lions vs Clemson Tigers",
-            "text": "The Nittany Lions are ready to face the Clemson Tigers in an exciting clash of college football giants.",
+            "keyword": "Premier League football stadium crowd",
+            "identity_keyword": "Chelsea vs Aston Villa",
+            "text": "Stamford Bridge witnessed a festive thriller as Chelsea hosted high-flying Aston Villa in a massive Premier League showdown.",
             "duration": 4,
-            "title": "Penn State vs Clemson | College Football Highlights & News",
-            "description": "Watch Penn State vs Clemson live! Latest scores, game updates, and top player highlights.",
-            "visual_type": "emotion"   # Crowd video from Pixabay
+            "title": "Chelsea 1-2 Aston Villa | Super Watkins Stuns the Blues!",
+            "description": "Ollie Watkins comes off the bench to score twice as Aston Villa secure a 2-1 comeback win over Chelsea at Stamford Bridge.",
+            "visual_type": "emotion"
         },
         {
-            "keyword": "Clemson football team attacking",
-            "identity_keyword": "Clemson Tigers football",
-            "text": "Clemson’s Tigers are bringing their A-game this season, with strong performances from their key players like Kaytron Allen.",
+            "keyword": "Reece James Chelsea corner kick",
+            "identity_keyword": "Reece James Chelsea",
+            "text": "Captain Reece James made his mark early, whipping in a dangerous corner that led to Joao Pedro’s opening goal for the Blues.",
             "duration": 5,
-            "visual_type": "identity"  # Google Image of Clemson players
+            "visual_type": "identity"
         },
         {
-            "keyword": "Penn State football team action",
-            "identity_keyword": "Penn State Nittany Lions",
-            "text": "Penn State players are on fire this season, showing great teamwork and determination against Clemson.",
+            "keyword": "Joao Pedro Chelsea goal celebration",
+            "identity_keyword": "Joao Pedro Chelsea",
+            "text": "Joao Pedro continues his fine form, finding the net in the 37th minute to give Chelsea a deserved lead heading into the break.",
             "duration": 5,
-            "visual_type": "identity"  # Google Image of PSU players
+            "visual_type": "identity"
         },
         {
-            "keyword": "Pinstripe Bowl stadium crowd",
-            "identity_keyword": "Pinstripe Bowl Yankee Stadium",
-            "text": "The historic Pinstripe Bowl, where Penn State and Clemson will clash, promises an unforgettable showdown.",
+            "keyword": "Ollie Watkins Aston Villa goal",
+            "identity_keyword": "Ollie Watkins Aston Villa",
+            "text": "The game flipped when Unai Emery introduced Ollie Watkins, who equalized just four minutes after coming onto the pitch.",
             "duration": 5,
-            "visual_type": "emotion"   # Video of stadium/crowd
+            "visual_type": "emotion"
         },
         {
-            "keyword": "Penn State coach strategizing",
-            "identity_keyword": "Penn State football coach",
-            "text": "Penn State’s new coach is implementing fresh strategies to challenge Clemson’s defenses effectively.",
+            "keyword": "Unai Emery Aston Villa manager celebrating",
+            "identity_keyword": "Unai Emery Aston Villa",
+            "text": "Tactical masterclass! Emery’s triple substitution worked wonders as Villa dominated the closing stages to secure the win.",
             "duration": 5,
-            "visual_type": "identity"  # Image of coach
+            "visual_type": "identity"
         },
         {
-            "keyword": "Clemson defensive coach Terry Smith",
-            "identity_keyword": "Terry Smith Clemson football",
-            "text": "Clemson’s defensive coordinator Terry Smith has been crucial in keeping the Tigers competitive throughout the season.",
+            "keyword": "Aston Villa players celebrating 11th win",
+            "identity_keyword": "Aston Villa football team",
+            "text": "With this 2-1 victory, Aston Villa have now won a staggering 11 games in a row across all competitions, keeping them in the title race.",
             "duration": 5,
-            "visual_type": "identity"  # Image of coach
+            "visual_type": "identity"
         },
         {
-            "keyword": "Football score update",
-            "identity_keyword": "Penn State vs Clemson scoreboard",
-            "text": "As the game unfolds, fans can track the latest Penn State and Clemson scores and predictions for the winner.",
+            "keyword": "Chelsea fans disappointed at stadium",
+            "identity_keyword": "Chelsea fc fans",
+            "text": "Chelsea look stunned after dropping points despite a strong start, leaving them with work to do as the new year approaches.",
             "duration": 5,
-            "visual_type": "emotion"   # Video of scoreboard/crowd
+            "visual_type": "emotion"
         },
         {
-            "keyword": "Football live streaming",
-            "identity_keyword": "watch Penn State Nittany Lions vs Clemson Tigers live",
-            "text": "Don’t miss a second of the action—watch Penn State Nittany Lions take on Clemson Tigers live today!",
+            "keyword": "Premier League football live broadcast",
+            "identity_keyword": "watch Chelsea vs Aston Villa highlights",
+            "text": "Catch the full highlights and post-match analysis of this Premier League classic on official streaming platforms now!",
             "duration": 5,
-            "visual_type": "emotion"   # Video of fans cheering / live action
+            "visual_type": "emotion"
         }
     ]
