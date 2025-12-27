@@ -15,7 +15,16 @@ PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
-# ---------- INITIALIZE COQUI XTTS (HINGLISH) ----------
+# ---------- XTTS SPEAKER VOICE (MANDATORY) ----------
+SPEAKER_WAV = "assets/voice.wav"
+
+if not os.path.exists(SPEAKER_WAV):
+    raise RuntimeError(
+        "XTTS requires a speaker WAV file. "
+        "Please add a voice file at assets/voice.wav"
+    )
+
+# ---------- INITIALIZE COQUI XTTS ----------
 tts_client = TTS(
     model_name="tts_models/multilingual/multi-dataset/xtts_v2",
     gpu=False
@@ -46,7 +55,7 @@ def download_pixabay_video(keyword, folder):
 
     try:
         r = requests.get(url, params=params, timeout=10).json()
-        if "hits" not in r or not r["hits"]:
+        if not r.get("hits"):
             return None
 
         video_url = r["hits"][0]["videos"]["large"]["url"]
@@ -74,7 +83,7 @@ def download_pixabay_image(keyword, folder):
 
     try:
         r = requests.get(url, params=params, timeout=10).json()
-        if "hits" not in r or not r["hits"]:
+        if not r.get("hits"):
             return None
 
         img_url = r["hits"][0]["largeImageURL"]
@@ -94,7 +103,7 @@ def create_text_graphic(text, folder):
     draw = ImageDraw.Draw(img)
     font = ImageFont.load_default()
 
-    wrapped = "\n".join(text[i:i+28] for i in range(0, len(text), 28))
+    wrapped = "\n".join(text[i:i + 28] for i in range(0, len(text), 28))
     draw.text((40, 400), wrapped, fill="white", font=font, spacing=10)
 
     path = os.path.join(folder, "fallback.jpg")
@@ -129,13 +138,13 @@ def create_video(storyboard):
         folder = f"./temp_{i}"
         os.makedirs(folder, exist_ok=True)
 
-        # ---------- AUDIO (HINGLISH) ----------
+        # ---------- AUDIO (XTTS – HINGLISH SAFE) ----------
         audio_path = f"audio_{i}.wav"
         tts_client.tts_to_file(
             text=entry["text"],
             file_path=audio_path,
             language="en",
-            speaker="random"
+            speaker_wav=SPEAKER_WAV
         )
 
         audio_clip = AudioFileClip(audio_path)
