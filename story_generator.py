@@ -21,7 +21,7 @@ if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
 # ============================================================
-# GOOGLE IMAGE SEARCH (OPTIONAL / FALLBACK)
+# GOOGLE IMAGE SEARCH (OPTIONAL)
 # ============================================================
 gis = None
 if GOOGLE_API_KEY and GOOGLE_CX:
@@ -34,9 +34,7 @@ SPEAKER_WAV = "assets/voice.wav"
 
 def ensure_speaker_wav():
     os.makedirs("assets", exist_ok=True)
-
     if not os.path.exists(SPEAKER_WAV):
-        print("XTTS speaker voice not found. Downloading default voice...")
         url = (
             "https://github.com/coqui-ai/TTS/raw/dev/tests/data/"
             "ljspeech/wavs/LJ001-0001.wav"
@@ -49,7 +47,7 @@ def ensure_speaker_wav():
 ensure_speaker_wav()
 
 # ============================================================
-# INITIALIZE COQUI XTTS (CPU SAFE)
+# INITIALIZE TTS
 # ============================================================
 tts_client = TTS(
     model_name="tts_models/multilingual/multi-dataset/xtts_v2",
@@ -64,13 +62,12 @@ SHORT_HEIGHT = 1280
 MAX_SHORT_DURATION = 59
 
 # ============================================================
-# KEYWORD FALLBACKS (GENERIC MOTION)
+# FALLBACK KEYWORDS (MOTION SAFE)
 # ============================================================
 KEYWORD_FALLBACKS = [
     "football stadium crowd",
     "sports crowd cheering",
-    "news studio background",
-    "breaking news background"
+    "news studio background"
 ]
 
 # ============================================================
@@ -97,8 +94,7 @@ def download_pixabay_video(keyword, folder):
             f.write(requests.get(video_url, timeout=15).content)
 
         return path
-    except Exception as e:
-        print("Pixabay video failed:", e)
+    except Exception:
         return None
 
 # ============================================================
@@ -127,12 +123,11 @@ def download_pixabay_image(keyword, folder):
             f.write(requests.get(img_url, timeout=10).content)
 
         return path
-    except Exception as e:
-        print("Pixabay image failed:", e)
+    except Exception:
         return None
 
 # ============================================================
-# GOOGLE IMAGE (IDENTITY ONLY)
+# GOOGLE IMAGE (IDENTITY)
 # ============================================================
 def download_google_image(keyword, folder):
     if not gis:
@@ -159,12 +154,11 @@ def download_google_image(keyword, folder):
         os.rename(downloaded, path)
 
         return path
-    except Exception as e:
-        print("Google image failed:", e)
+    except Exception:
         return None
 
 # ============================================================
-# TEXT GRAPHIC FALLBACK
+# TEXT FALLBACK
 # ============================================================
 def create_text_graphic(text, folder):
     img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (12, 12, 12))
@@ -179,17 +173,14 @@ def create_text_graphic(text, folder):
     return path
 
 # ============================================================
-# IMAGE NORMALIZATION
+# HELPERS
 # ============================================================
-def normalize_image(input_path, output_path):
-    with Image.open(input_path) as img:
+def normalize_image(src, dst):
+    with Image.open(src) as img:
         img = img.convert("RGB")
         img = img.resize((SHORT_WIDTH, SHORT_HEIGHT), Image.Resampling.LANCZOS)
-        img.save(output_path, "JPEG", quality=95)
+        img.save(dst, "JPEG", quality=95)
 
-# ============================================================
-# VIDEO NORMALIZATION
-# ============================================================
 def normalize_video(path, duration):
     clip = VideoFileClip(path)
     clip = clip.subclip(0, min(duration, clip.duration))
@@ -197,18 +188,15 @@ def normalize_video(path, duration):
     clip = clip.crop(x_center=clip.w / 2, width=SHORT_WIDTH)
     return clip
 
-# ============================================================
-# KEN BURNS EFFECT
-# ============================================================
-def ken_burns_effect(clip, zoom_factor=1.18):
-    return clip.resize(lambda t: 1 + (zoom_factor - 1) * (t / clip.duration))
+def ken_burns(clip, zoom=1.18):
+    return clip.resize(lambda t: 1 + (zoom - 1) * (t / clip.duration))
 
 # ============================================================
-# MAIN VIDEO CREATOR
+# MAIN VIDEO CREATOR (EDITOR LOGIC)
 # ============================================================
 def create_video(storyboard):
-    video_segments = []
-    total_duration = 0
+    segments = []
+    total = 0
 
     for i, entry in enumerate(storyboard):
         folder = f"./temp_{i}"
@@ -223,69 +211,73 @@ def create_video(storyboard):
             speaker_wav=SPEAKER_WAV
         )
 
-        audio_clip = AudioFileClip(audio_path)
+        audio = AudioFileClip(audio_path)
+        if total + audio.duration > MAX_SHORT_DURATION:
+            audio = audio.subclip(0, MAX_SHORT_DURATION - total)
 
-        if total_duration + audio_clip.duration > MAX_SHORT_DURATION:
-            audio_clip = audio_clip.subclip(
-                0, MAX_SHORT_DURATION - total_duration
-            )
-
-        duration = audio_clip.duration
-        total_duration += duration
-
-        clip = None
+        duration = audio.duration
+        total += duration
 
         primary_kw = entry.get("keyword")
         identity_kw = entry.get("identity_keyword")
+        visual_type = entry.get("visual_type", "video")  # video | image | identity
 
-        keywords = []
-        if primary_kw:
-            keywords.append(primary_kw)
-        keywords += KEYWORD_FALLBACKS
+        clip = None
 
-        # ---------------- VISUAL SELECTION ----------------
-        for kw in keywords:
-            # 1️⃣ Pixabay video (motion)
-            video_path = download_pixabay_video(kw, folder)
-            if video_path:
-                clip = normalize_video(video_path, duration)
-                break
+        # ====================================================
+        # EDITOR VISUAL RULES
+        # ====================================================
 
-            # 2️⃣ Pixabay image (context)
-            image_path = download_pixabay_image(kw, folder)
-            if image_path:
-                safe = os.path.join(folder, "safe.jpg")
-                normalize_image(image_path, safe)
-                img_duration = min(duration, 3.5)
-                clip = ImageClip(safe).set_duration(img_duration)
-                clip = ken_burns_effect(clip)
-                break
-
-        # 3️⃣ Google image (identity only)
-        if not clip and identity_kw:
-            google_image = download_google_image(identity_kw, folder)
-            if google_image:
+        # 1️⃣ IDENTITY SCENE (players, faces, teams)
+        if visual_type == "identity" and identity_kw:
+            img = download_google_image(identity_kw, folder)
+            if img:
                 safe = os.path.join(folder, "safe_google.jpg")
-                normalize_image(google_image, safe)
-                img_duration = min(duration, 3.5)
-                clip = ImageClip(safe).set_duration(img_duration)
-                clip = ken_burns_effect(clip, zoom_factor=1.22)
+                normalize_image(img, safe)
+                clip = ImageClip(safe).set_duration(min(duration, 3.5))
+                clip = ken_burns(clip, zoom=1.22)
 
-        # 4️⃣ Text fallback
+        # 2️⃣ IMAGE SCENE (analysis, tactics)
+        if not clip and visual_type == "image":
+            img = download_pixabay_image(primary_kw, folder)
+            if img:
+                safe = os.path.join(folder, "safe.jpg")
+                normalize_image(img, safe)
+                clip = ImageClip(safe).set_duration(min(duration, 3.5))
+                clip = ken_burns(clip)
+
+        # 3️⃣ VIDEO SCENE (emotion, energy)
+        if not clip:
+            for kw in [primary_kw] + KEYWORD_FALLBACKS:
+                video = download_pixabay_video(kw, folder)
+                if video:
+                    clip = normalize_video(video, duration)
+                    break
+
+        # 4️⃣ LAST RESORT IMAGE
+        if not clip and primary_kw:
+            img = download_pixabay_image(primary_kw, folder)
+            if img:
+                safe = os.path.join(folder, "safe.jpg")
+                normalize_image(img, safe)
+                clip = ImageClip(safe).set_duration(min(duration, 3.5))
+                clip = ken_burns(clip)
+
+        # 5️⃣ TEXT FALLBACK
         if not clip:
             fallback = create_text_graphic(entry["text"], folder)
             clip = ImageClip(fallback).set_duration(duration)
 
-        clip = clip.set_audio(audio_clip)
-        video_segments.append(clip)
+        clip = clip.set_audio(audio)
+        segments.append(clip)
 
-        if total_duration >= MAX_SHORT_DURATION:
+        if total >= MAX_SHORT_DURATION:
             break
 
-    if not video_segments:
-        raise RuntimeError("No video segments created")
+    if not segments:
+        raise RuntimeError("No segments created")
 
-    final = concatenate_videoclips(video_segments, method="compose")
+    final = concatenate_videoclips(segments, method="compose")
     final.write_videofile(
         "final_video.mp4",
         fps=30,
