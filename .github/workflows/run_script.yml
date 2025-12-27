@@ -42,7 +42,7 @@ jobs:
           rm -rf ~/.cache/pip
 
       # -----------------------------
-      # Install CPU-only PyTorch
+      # Install CPU-only PyTorch (COMPATIBLE)
       # -----------------------------
       - name: Install CPU-only PyTorch
         run: |
@@ -52,11 +52,15 @@ jobs:
             --index-url https://download.pytorch.org/whl/cpu
 
       # -----------------------------
-      # Python Dependencies
+      # Python Dependencies (PINNED)
       # -----------------------------
       - name: Install Python dependencies
         run: |
           pip install --upgrade pip
+
+          # 🔴 CRITICAL FIX
+          pip install --no-cache-dir transformers==4.36.2
+
           pip install --no-cache-dir \
             moviepy==1.0.3 \
             "pillow<10" \
