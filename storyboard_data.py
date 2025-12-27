@@ -1,45 +1,53 @@
 def get_storyboard():
     return [
         {
-            "keyword": "Nottingham Forest vs Manchester City Premier League",
-            "text": "Nottingham Forest face Manchester City in a highly anticipated Premier League clash, as Pep Guardiola’s side aim to maintain their title push.",
+            "keyword": "Premier League football stadium crowd",
+            "identity_keyword": "Arsenal vs Brighton",
+            "text": "Arsenal take on Brighton in a high-intensity Premier League clash, where pace, tactics, and momentum could decide the outcome.",
             "duration": 4,
-            "title": "Nottingham Forest vs Man City | Premier League Preview",
-            "description": "Nottingham Forest vs Manchester City match preview, team news, key players, prediction, and where to watch live"
+            "title": "Arsenal vs Brighton | Premier League Match Preview",
+            "description": "Arsenal vs Brighton preview, key players, tactical battle, and where to watch the Premier League match live"
         },
         {
-            "keyword": "Nottingham Forest City Ground stadium",
-            "text": "The match takes place at the City Ground, home of Nottingham Forest, where the crowd is known for creating a tough atmosphere for visiting teams.",
+            "keyword": "Arsenal football team attacking",
+            "identity_keyword": "Arsenal football team",
+            "text": "Arsenal come into this match with quick ball movement, aggressive pressing, and confidence built from recent performances.",
             "duration": 5
         },
         {
-            "keyword": "Manchester City football team",
-            "text": "Manchester City come into this match with their trademark possession-based football, sharp passing, and attacking depth across the squad.",
+            "keyword": "Brighton football team buildup play",
+            "identity_keyword": "Brighton and Hove Albion football team",
+            "text": "Brighton are known for structured buildup play, smart positioning, and the ability to trouble top teams with tactical discipline.",
             "duration": 5
         },
         {
-            "keyword": "Pep Guardiola Manchester City",
-            "text": "Under Pep Guardiola, Manchester City focus on controlling the game through midfield dominance and tactical discipline.",
-            "duration": 4
-        },
-        {
-            "keyword": "Nottingham Forest football team",
-            "text": "Nottingham Forest will rely on defensive organization and quick counter-attacks as they look to challenge the reigning champions.",
+            "keyword": "Premier League defensive action",
+            "identity_keyword": "Jurrien Timber Arsenal",
+            "text": "Jurrien Timber adds versatility to Arsenal’s defense, offering composure on the ball and strength in one-on-one situations.",
             "duration": 5
         },
         {
-            "keyword": "Tijjani Reijnders football",
-            "text": "Midfield battles could be decisive, with players like Tijjani Reijnders influencing the tempo and transitions during the match.",
+            "keyword": "football midfield battle",
+            "identity_keyword": "Arsenal Brighton midfield",
+            "text": "The midfield battle will be crucial, with both sides looking to control possession and dictate the tempo of the game.",
             "duration": 5
         },
         {
-            "keyword": "Manchester City attacking players",
-            "text": "Manchester City’s attacking unit will look to break down Forest’s defense with movement, creativity, and clinical finishing.",
+            "keyword": "Premier League counter attack football",
+            "identity_keyword": "Brighton counter attack",
+            "text": "Brighton will look to exploit spaces on the counter, using quick transitions to challenge Arsenal’s defensive line.",
             "duration": 5
         },
         {
-            "keyword": "Premier League match crowd",
-            "text": "Fans can watch Nottingham Forest vs Manchester City live on official Premier League broadcasters and streaming platforms worldwide.",
+            "keyword": "Premier League crowd celebration",
+            "identity_keyword": "Emirates Stadium Arsenal crowd",
+            "text": "With the home crowd behind them, Arsenal aim to turn pressure into goals and secure a vital Premier League result.",
+            "duration": 5
+        },
+        {
+            "keyword": "Premier League football fans watching",
+            "identity_keyword": "where to watch Arsenal vs Brighton",
+            "text": "Fans can watch Arsenal vs Brighton live on official Premier League broadcasters and streaming platforms worldwide.",
             "duration": 5
         }
     ]
