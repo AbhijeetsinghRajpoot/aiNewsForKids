@@ -20,9 +20,6 @@ GOOGLE_CX = os.getenv("GOOGLE_CX")
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
-# ============================================================
-# GOOGLE IMAGE SEARCH (OPTIONAL)
-# ============================================================
 gis = None
 if GOOGLE_API_KEY and GOOGLE_CX:
     gis = GoogleImagesSearch(GOOGLE_API_KEY, GOOGLE_CX)
@@ -157,7 +154,11 @@ def download_google_image(keyword, folder):
             "safe": "active",
         })
 
-        img = gis.results()[0]
+        results = gis.results()
+        if not results:
+            return None
+
+        img = results[0]
         img.download(folder)
 
         src = os.path.join(folder, img.filename)
@@ -234,13 +235,22 @@ def create_video(storyboard):
                     continue
                 video = download_pixabay_video(kw, folder)
                 if video:
+                    print(f"[VIDEO] Using Pixabay video for keyword: {kw}")
                     clip = normalize_video(video, duration)
                     break
 
-        # ---------- FACTS / IDENTITY → IMAGE ----------
+        # ---------- IDENTITY / FACTS → IMAGE ----------
         if not clip:
-            query = identity_kw if visual_type == "identity" else keyword
-            img = download_google_image(query, folder) or download_pixabay_image(query, folder)
+            img = None
+            if visual_type == "identity" and identity_kw:
+                print(f"[GOOGLE] Trying Google Image for: {identity_kw}")
+                img = download_google_image(identity_kw, folder)
+                if img:
+                    print(f"[GOOGLE] Found Google Image for: {identity_kw}")
+            if not img and keyword:
+                print(f"[PIXABAY] Fallback image for: {keyword}")
+                img = download_pixabay_image(keyword, folder)
+
             if img:
                 safe = os.path.join(folder, "safe.jpg")
                 fit_image_to_viewport(img, safe)
