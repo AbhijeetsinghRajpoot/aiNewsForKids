@@ -1,81 +1,67 @@
 def get_storyboard():
     return [
         {
-            # 🎬 OPENING – EMOTION
-            "visual_type": "emotion",
-            "keyword": "Emirates Stadium crowd night Premier League",
-            "text": (
-                "The Emirates Stadium is rocking as Arsenal take on Brighton "
-                "in a festive December Premier League clash, aiming to stay "
-                "on top of the table."
-            ),
-            "title": "Arsenal vs Brighton | Premier League Live Update & News",
-            "description": (
-                "Latest team news, score updates, and the shock Jurrien Timber "
-                "injury ahead of Arsenal vs Brighton at the Emirates."
-            ),
+            "keyword": "Penn State football stadium crowd",
+            "identity_keyword": "Penn State Nittany Lions",
+            "text": "The Nittany Lions are ready to face the Clemson Tigers in an exciting clash of college football giants.",
+            "duration": 5,
+            "title": "Penn State vs Clemson | College Football Highlights",
+            "description": "Watch Penn State take on Clemson with live scores, game updates, and player highlights. #PSU #Clemson #CollegeFootball"
         },
         {
-            # 📊 FACTS – HOME FORM
-            "visual_type": "facts",
-            "keyword": "Arsenal home record Premier League graphic",
-            "text": (
-                "The Gunners have been unstoppable at home this season, "
-                "boasting a near perfect record at the Emirates."
-            ),
+            "keyword": "Clemson Tigers football team action",
+            "identity_keyword": "Clemson Tigers",
+            "text": "Clemson’s Tigers are bringing their A-game this season, with strong performances from their key players like Kaytron Allen.",
+            "duration": 5,
+            "visual_type": "identity"
         },
         {
-            # 📊 FACTS – BRIGHTON ANALYSIS
-            "visual_type": "facts",
-            "keyword": "Brighton build up play tactics football",
-            "text": (
-                "Fabian Hurzeler’s Brighton side remains a serious tactical "
-                "threat, strengthened by the return of captain Lewis Dunk."
-            ),
+            "keyword": "college football fans cheering",
+            "identity_keyword": None,
+            "text": "Fans are flocking to stadiums and streaming online, eager to see Penn State score big against Clemson.",
+            "duration": 4,
+            "visual_type": "video"
         },
         {
-            # 🧍 IDENTITY – INJURY NEWS
-            "visual_type": "identity",
-            "identity_keyword": "Jurrien Timber Arsenal",
-            "text": (
-                "Shock news from the team sheet, as Jurrien Timber is ruled out "
-                "after picking up a muscle injury in midweek."
-            ),
+            "keyword": "Pinstripe Bowl football stadium",
+            "identity_keyword": None,
+            "text": "The historic Pinstripe Bowl, where Penn State and Clemson will clash, promises an unforgettable showdown.",
+            "duration": 5,
+            "visual_type": "image"
         },
         {
-            # 🧠 FACTS – TACTICAL DECISION
-            "visual_type": "facts",
-            "keyword": "football tactical board defensive adjustment",
-            "text": (
-                "With Timber and Ben White sidelined, Mikel Arteta makes a bold "
-                "call, dropping Declan Rice into the defensive line."
-            ),
+            "keyword": "Penn State coach football strategy",
+            "identity_keyword": "Penn State Coach",
+            "text": "Penn State’s new coach is implementing fresh strategies to challenge Clemson’s defenses effectively.",
+            "duration": 5,
+            "visual_type": "identity"
         },
         {
-            # 🧍 IDENTITY – KEY PLAYER
-            "visual_type": "identity",
-            "identity_keyword": "Martin Odegaard Arsenal captain",
-            "text": (
-                "Captain Martin Odegaard has already set the tone, leading "
-                "from the front as Arsenal push for three vital points."
-            ),
+            "keyword": "Clemson Tigers football game highlights",
+            "identity_keyword": "Terry Smith Clemson",
+            "text": "Clemson’s defensive coordinator Terry Smith has been crucial in keeping the Tigers competitive throughout the season.",
+            "duration": 5,
+            "visual_type": "identity"
         },
         {
-            # 🎬 EMOTION – TITLE RACE
-            "visual_type": "emotion",
-            "keyword": "Premier League crowd celebration Arsenal",
-            "text": (
-                "Every match now feels like a final for Arsenal, as they fight "
-                "to maintain a narrow lead over Manchester City."
-            ),
+            "keyword": "college football scoreboard",
+            "identity_keyword": None,
+            "text": "As the game unfolds, fans can track the latest Penn State and Clemson scores and predictions for the winner.",
+            "duration": 4,
+            "visual_type": "video"
         },
         {
-            # 🎬 EMOTION – CALL TO ACTION
-            "visual_type": "emotion",
-            "keyword": "Premier League fans watching football live",
-            "text": (
-                "Don’t miss a second of the action, as Arsenal and Brighton "
-                "clash in a crucial Premier League showdown."
-            ),
+            "keyword": "Penn State vs Clemson game today",
+            "identity_keyword": None,
+            "text": "Don’t miss a second of the action—watch Penn State Nittany Lions take on Clemson Tigers live today!",
+            "duration": 4,
+            "visual_type": "video"
         },
+        {
+            "keyword": "college football fans celebration",
+            "identity_keyword": None,
+            "text": "Whether cheering for PSU or Clemson, college football fans are celebrating the excitement of this highly anticipated matchup.",
+            "duration": 4,
+            "visual_type": "video"
+        }
     ]
