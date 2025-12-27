@@ -6,30 +6,46 @@ import youtube_uploader
 
 
 def run_automation():
-    print("Step 1: Loading Storyboard...")
+    print("STEP 1: Loading storyboard...")
     storyboard = storyboard_data.get_storyboard()
 
-    if not storyboard:
-        raise RuntimeError("Storyboard is empty")
+    if not storyboard or len(storyboard) == 0:
+        raise RuntimeError("Storyboard is empty or invalid")
 
-    # Title & description
-    video_title = storyboard[0].get("title", storyboard[0]["keyword"]) + " #Shorts"
-    video_description = storyboard[0].get("description", "") + "\n\n#Shorts"
+    # -----------------------------
+    # Title & Description
+    # -----------------------------
+    first_scene = storyboard[0]
 
-    print("Step 2: Generating Video...")
+    video_title = (
+        first_scene.get("title")
+        or first_scene.get("keyword", "Trending Shorts")
+    ) + " #Shorts"
+
+    video_description = (
+        first_scene.get("description", "Latest update")
+        + "\n\n#shorts #trending #news"
+    )
+
+    print("STEP 2: Generating video...")
     video_file = story_generator.create_video(storyboard)
 
     if not video_file or not os.path.exists(video_file):
-        raise RuntimeError("Video generation failed")
+        raise RuntimeError("Video generation failed or file not found")
 
-    print("Step 3: Uploading to YouTube...")
+    print(f"Video generated successfully: {video_file}")
+
+    # -----------------------------
+    # Upload to YouTube
+    # -----------------------------
+    print("STEP 3: Uploading to YouTube...")
     youtube_uploader.upload_to_youtube(
-        video_file,
-        video_title,
-        video_description
+        video_path=video_file,
+        title=video_title,
+        description=video_description
     )
 
-    print("Automation completed successfully!")
+    print("AUTOMATION COMPLETED SUCCESSFULLY 🚀")
 
 
 if __name__ == "__main__":
