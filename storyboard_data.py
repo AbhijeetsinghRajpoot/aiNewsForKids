@@ -1,35 +1,45 @@
 def get_storyboard():
     return [
         {
-            "keyword": "Dan Campbell Detroit Lions",
-            "text": "This is the story of Dan Campbell, the head coach who changed the culture of the Detroit Lions with pure passion and toughness.",
+            "keyword": "Khalsa Panth history",
+            "text": "Aaj hum baat karenge Khalsa Panth ke baare mein, jo Sikh dharm ka sabse shaktishaali aur pavitra pehlu maana jaata hai.",
             "duration": 4,
-            "title": "DAN CAMPBELL STORY",
-            "description": "Dan Campbell leadership, mindset, and Detroit Lions transformation"
+            "title": "Khalsa Panth Ka Itihas",
+            "description": "Khalsa Panth ka janm, uska matlab aur Sikh dharm mein uski bhoomika"
         },
         {
-            "keyword": "Dan Campbell press conference",
-            "text": "Dan Campbell became head coach of the Detroit Lions in 2021 and instantly became known for his emotional and honest press conferences.",
+            "keyword": "Guru Gobind Singh Ji portrait",
+            "text": "Khalsa Panth ki sthapna 1699 mein  ne ki thi, jo Sikh dharm ke dasve Guru the.",
             "duration": 5
         },
         {
-            "keyword": "Dan Campbell kneecap quote",
-            "text": "He went viral after saying his team would bite kneecaps, showing the aggressive mentality he wanted his players to adopt.",
+            "keyword": "Anandpur Sahib Vaisakhi",
+            "text": "Vaisakhi ke din, Anandpur Sahib mein Guru Gobind Singh Ji ne Khalsa Panth ki ghoshna ki aur Sikh samaj ko ek nayi pehchaan di.",
             "duration": 5
         },
         {
-            "keyword": "Detroit Lions turnaround",
-            "text": "Under Dan Campbell, the Lions transformed from a struggling team into a strong playoff contender with belief and discipline.",
+            "keyword": "Panj Pyare illustration",
+            "text": "Is dauraan Panch Pyare ka chayan hua, jo himmat, balidaan aur barabari ka prateek bane.",
             "duration": 5
         },
         {
-            "keyword": "Dan Campbell coaching style",
-            "text": "Players respect Dan Campbell for his honesty, accountability, and willingness to fight alongside his team.",
-            "duration": 5
+            "keyword": "Khalsa five Ks symbols",
+            "text": "Khalsa Panth ke Sikh paanch Kakaar pehente hain – Kesh, Kara, Kirpan, Kangha aur Kachera.",
+            "duration": 6
         },
         {
-            "keyword": "Dan Campbell motivation",
-            "text": "Dan Campbell proved that leadership is not just about tactics, but about heart, trust, and never giving up.",
+            "keyword": "Sikh warrior Khalsa",
+            "text": "Khalsa ka matlab hota hai shuddh aur nirbhay jeevan, jahan Sikh anyaay ke khilaaf khade hone ka sankalp leta hai.",
+            "duration": 6
+        },
+        {
+            "keyword": "Sikh community seva",
+            "text": "Khalsa Panth sirf yudh ka nahi, balki seva, satya aur insaniyat ka bhi sandesh deta hai.",
+            "duration": 6
+        },
+        {
+            "keyword": "Sikh unity Khalsa",
+            "text": "Aaj bhi Khalsa Panth Sikh dharm ki shaan hai aur duniya bhar mein himmat aur nyay ka prateek maana jaata hai.",
             "duration": 5
         }
     ]
