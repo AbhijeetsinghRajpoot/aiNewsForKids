@@ -9,7 +9,7 @@ def run_automation():
     print("STEP 1: Loading storyboard...")
     storyboard = storyboard_data.get_storyboard()
 
-    if not storyboard or len(storyboard) == 0:
+    if not storyboard:
         raise RuntimeError("Storyboard is empty or invalid")
 
     # -----------------------------
