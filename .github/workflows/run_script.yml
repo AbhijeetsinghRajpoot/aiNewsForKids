@@ -10,19 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
-    # ✅ GLOBAL ENV (IMPORTANT)
+    # -----------------------------
+    # GLOBAL ENV VARIABLES
+    # -----------------------------
     env:
       PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      GOOGLE_CX: ${{ secrets.GOOGLE_CX }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
       COQUI_TOS_AGREED: "1"
 
     steps:
+      # -----------------------------
+      # Checkout Code
+      # -----------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # -----------------------------
+      # Python Setup
+      # -----------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       # -----------------------------
       # System Dependencies
@@ -34,7 +45,7 @@ jobs:
           sudo sed -i 's/policy domain="path" rights="none"/policy domain="path" rights="read|write"/g' /etc/ImageMagick-6/policy.xml
 
       # -----------------------------
-      # Clean Python Cache
+      # Clear Cache (IMPORTANT)
       # -----------------------------
       - name: Clear pip cache
         run: |
@@ -42,7 +53,7 @@ jobs:
           rm -rf ~/.cache/pip
 
       # -----------------------------
-      # Install CPU-only PyTorch (COMPATIBLE)
+      # Install CPU-only PyTorch
       # -----------------------------
       - name: Install CPU-only PyTorch
         run: |
@@ -58,7 +69,7 @@ jobs:
         run: |
           pip install --upgrade pip
 
-          # 🔴 CRITICAL FIX
+          # 🔴 CRITICAL: Transformers compatibility
           pip install --no-cache-dir transformers==4.36.2
 
           pip install --no-cache-dir \
@@ -68,6 +79,7 @@ jobs:
             requests \
             numpy \
             TTS \
+            google-images-search \
             google-api-python-client \
             google-auth-oauthlib \
             google-auth-httplib2
