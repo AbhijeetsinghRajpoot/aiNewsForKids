@@ -1,37 +1,8 @@
 import os
-from google_images_search import GoogleImagesSearch
 
 import storyboard_data
 import story_generator
 import youtube_uploader
-
-
-# ----------------------------------
-# Initialize Google Image Search
-# ----------------------------------
-gis = GoogleImagesSearch(
-    os.getenv("GOOGLE_API_KEY"),
-    os.getenv("GOOGLE_CX")
-)
-
-
-def enhance_keyword_with_google(keyword):
-    """
-    Uses Google Image Search ONLY to validate/enhance keyword
-    Pixabay will still download images inside story_generator
-    """
-    try:
-        results = gis.search({
-            "q": keyword,
-            "num": 1
-        })
-
-        if results and gis.results():
-            return keyword  # keyword is valid
-    except Exception:
-        pass
-
-    return keyword  # fallback (no breaking changes)
 
 
 def run_automation():
@@ -40,13 +11,6 @@ def run_automation():
 
     if not storyboard:
         raise RuntimeError("Storyboard is empty or invalid")
-
-    # ----------------------------------
-    # Enhance storyboard keywords (NEW)
-    # ----------------------------------
-    for scene in storyboard:
-        if "keyword" in scene:
-            scene["keyword"] = enhance_keyword_with_google(scene["keyword"])
 
     # ----------------------------------
     # Title & Description
@@ -63,7 +27,7 @@ def run_automation():
         + "\n\n#shorts #trending #news"
     )
 
-    print("STEP 2: Generating video (Pixabay still used)...")
+    print("STEP 2: Generating video...")
     video_file = story_generator.create_video(storyboard)
 
     if not video_file or not os.path.exists(video_file):
