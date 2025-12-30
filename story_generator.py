@@ -8,21 +8,14 @@ from moviepy.editor import (
     concatenate_videoclips
 )
 from TTS.api import TTS
-from google_images_search import GoogleImagesSearch
 
 # ============================================================
 # ENVIRONMENT VARIABLES
 # ============================================================
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-GOOGLE_CX = os.getenv("GOOGLE_CX")
 
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
-
-gis = None
-if GOOGLE_API_KEY and GOOGLE_CX:
-    gis = GoogleImagesSearch(GOOGLE_API_KEY, GOOGLE_CX)
 
 # ============================================================
 # XTTS SPEAKER VOICE
@@ -59,13 +52,13 @@ SHORT_HEIGHT = 1280
 MAX_SHORT_DURATION = 59
 
 KEYWORD_FALLBACKS = [
-    "football stadium crowd",
-    "sports crowd cheering",
-    "news studio background"
+    "cricket stadium crowd",
+    "women cricket celebration",
+    "sports crowd cheering"
 ]
 
 # ============================================================
-# VIEWPORT-SAFE IMAGE FIT
+# IMAGE FITTING
 # ============================================================
 def fit_image_to_viewport(src, dst):
     with Image.open(src) as img:
@@ -82,7 +75,7 @@ def fit_image_to_viewport(src, dst):
         img.save(dst, "JPEG", quality=95)
 
 # ============================================================
-# PIXABAY VIDEO
+# PIXABAY VIDEO (EMOTION)
 # ============================================================
 def download_pixabay_video(keyword, folder):
     try:
@@ -102,15 +95,19 @@ def download_pixabay_video(keyword, folder):
 
         url = r["hits"][0]["videos"]["large"]["url"]
         path = os.path.join(folder, "pixabay.mp4")
+
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=15).content)
 
+        print(f"[PIXABAY VIDEO] {keyword}")
         return path
-    except Exception:
+
+    except Exception as e:
+        print("[PIXABAY VIDEO ERROR]", e)
         return None
 
 # ============================================================
-# PIXABAY IMAGE
+# PIXABAY IMAGE (FALLBACK)
 # ============================================================
 def download_pixabay_image(keyword, folder):
     try:
@@ -132,44 +129,67 @@ def download_pixabay_image(keyword, folder):
 
         url = r["hits"][0]["largeImageURL"]
         path = os.path.join(folder, "pixabay.jpg")
+
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=10).content)
 
+        print(f"[PIXABAY IMAGE] {keyword}")
         return path
-    except Exception:
+
+    except Exception as e:
+        print("[PIXABAY IMAGE ERROR]", e)
         return None
 
 # ============================================================
-# GOOGLE IMAGE (FACTS / IDENTITY)
+# WIKIPEDIA IMAGE (IDENTITY)
 # ============================================================
-def download_google_image(keyword, folder):
-    if not gis:
-        return None
+def download_wikipedia_image(keyword, folder):
     try:
-        gis.search({
-            "q": keyword,
-            "num": 1,
-            "imgType": "photo",
-            "imgSize": "large",
-            "safe": "active",
-        })
+        search_url = "https://en.wikipedia.org/w/api.php"
+        search_params = {
+            "action": "query",
+            "format": "json",
+            "list": "search",
+            "srsearch": keyword,
+            "srlimit": 1
+        }
 
-        results = gis.results()
-        if not results:
+        search_res = requests.get(search_url, params=search_params, timeout=10).json()
+        if not search_res["query"]["search"]:
             return None
 
-        img = results[0]
-        img.download(folder)
+        title = search_res["query"]["search"][0]["title"]
 
-        src = os.path.join(folder, img.filename)
-        dst = os.path.join(folder, "google.jpg")
-        os.rename(src, dst)
-        return dst
-    except Exception:
+        image_params = {
+            "action": "query",
+            "format": "json",
+            "titles": title,
+            "prop": "pageimages",
+            "pithumbsize": 1200
+        }
+
+        image_res = requests.get(search_url, params=image_params, timeout=10).json()
+        pages = image_res["query"]["pages"]
+        page = next(iter(pages.values()))
+
+        if "thumbnail" not in page:
+            return None
+
+        img_url = page["thumbnail"]["source"]
+        path = os.path.join(folder, "wikipedia.jpg")
+
+        with open(path, "wb") as f:
+            f.write(requests.get(img_url, timeout=10).content)
+
+        print(f"[WIKIPEDIA IMAGE] {keyword}")
+        return path
+
+    except Exception as e:
+        print("[WIKIPEDIA ERROR]", e)
         return None
 
 # ============================================================
-# VIDEO NORMALIZATION
+# VIDEO HELPERS
 # ============================================================
 def normalize_video(path, duration):
     clip = VideoFileClip(path)
@@ -177,18 +197,18 @@ def normalize_video(path, duration):
     clip = clip.resize(height=SHORT_HEIGHT)
     return clip.crop(x_center=clip.w / 2, width=SHORT_WIDTH)
 
-def ken_burns(clip, zoom=1.15):
+def ken_burns(clip, zoom=1.12):
     return clip.resize(lambda t: 1 + (zoom - 1) * (t / clip.duration))
 
 # ============================================================
 # TEXT FALLBACK
 # ============================================================
 def create_text_graphic(text, folder):
-    img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (12, 12, 12))
+    img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (10, 10, 10))
     draw = ImageDraw.Draw(img)
     font = ImageFont.load_default()
     wrapped = "\n".join(text[i:i + 28] for i in range(0, len(text), 28))
-    draw.text((40, 400), wrapped, fill="white", font=font, spacing=10)
+    draw.text((40, 400), wrapped, fill="white", font=font, spacing=12)
     path = os.path.join(folder, "fallback.jpg")
     img.save(path, "JPEG", quality=95)
     return path
@@ -228,27 +248,23 @@ def create_video(storyboard):
 
         clip = None
 
-        # ---------- EMOTION → VIDEO ----------
+        # ---------- EMOTION → PIXABAY VIDEO ----------
         if visual_type == "emotion":
             for kw in [keyword] + KEYWORD_FALLBACKS:
                 if not kw:
                     continue
                 video = download_pixabay_video(kw, folder)
                 if video:
-                    print(f"[VIDEO] Using Pixabay video for keyword: {kw}")
                     clip = normalize_video(video, duration)
                     break
 
-        # ---------- IDENTITY / FACTS → IMAGE ----------
+        # ---------- IDENTITY → WIKIPEDIA IMAGE ----------
         if not clip:
             img = None
             if visual_type == "identity" and identity_kw:
-                print(f"[GOOGLE] Trying Google Image for: {identity_kw}")
-                img = download_google_image(identity_kw, folder)
-                if img:
-                    print(f"[GOOGLE] Found Google Image for: {identity_kw}")
+                img = download_wikipedia_image(identity_kw, folder)
+
             if not img and keyword:
-                print(f"[PIXABAY] Fallback image for: {keyword}")
                 img = download_pixabay_image(keyword, folder)
 
             if img:
@@ -275,6 +291,7 @@ def create_video(storyboard):
         fps=30,
         codec="libx264",
         audio_codec="aac",
+        threads=2,
     )
 
     return "final_video.mp4"
