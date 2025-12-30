@@ -1,61 +1,94 @@
 def get_storyboard():
     return [
+
+        # 1️⃣ INTRO — SERIES DOMINANCE & CONTEXT
         {
-            "keyword": "Premier League football stadium crowd",
-            "identity_keyword": "Chelsea vs Aston Villa",
-            "text": "Stamford Bridge witnessed a festive thriller as Chelsea hosted high-flying Aston Villa in a massive Premier League showdown.",
-            "duration": 4,
-            "title": "Chelsea 1-2 Aston Villa | Super Watkins Stuns the Blues!",
-            "description": "Ollie Watkins comes off the bench to score twice as Aston Villa secure a 2-1 comeback win over Chelsea at Stamford Bridge.",
-            "visual_type": "emotion"
-        },
-        {
-            "keyword": "Reece James Chelsea corner kick",
-            "identity_keyword": "Reece James Chelsea",
-            "text": "Captain Reece James made his mark early, whipping in a dangerous corner that led to Joao Pedro’s opening goal for the Blues.",
-            "duration": 5,
-            "visual_type": "identity"
-        },
-        {
-            "keyword": "Joao Pedro Chelsea goal celebration",
-            "identity_keyword": "Joao Pedro Chelsea",
-            "text": "Joao Pedro continues his fine form, finding the net in the 37th minute to give Chelsea a deserved lead heading into the break.",
-            "duration": 5,
-            "visual_type": "identity"
-        },
-        {
-            "keyword": "Ollie Watkins Aston Villa goal",
-            "identity_keyword": "Ollie Watkins Aston Villa",
-            "text": "The game flipped when Unai Emery introduced Ollie Watkins, who equalized just four minutes after coming onto the pitch.",
+            "keyword": "India women vs Sri Lanka women T20I series highlights",
+            "identity_keyword": "India women's national cricket team vs Sri Lanka women",
+            "text": "The India women's cricket team has dominated the Sri Lanka tour, leading the five-match series with commanding victories and showcasing world-class performances!",
             "duration": 5,
             "visual_type": "emotion"
         },
+
+        # 2️⃣ MATCH 1 HIGHLIGHT — INDIAN WIN
         {
-            "keyword": "Unai Emery Aston Villa manager celebrating",
-            "identity_keyword": "Unai Emery Aston Villa",
-            "text": "Tactical masterclass! Emery’s triple substitution worked wonders as Villa dominated the closing stages to secure the win.",
+            "keyword": "India women beat Sri Lanka women 1st T20I",
+            "identity_keyword": "Jemimah Rodrigues India women",
+            "text": "In the opening T20I, India Women secured an emphatic win over Sri Lanka Women, setting the tone for the series with a confident performance.",
             "duration": 5,
             "visual_type": "identity"
         },
+
+        # 3️⃣ MATCH 2 HIGHLIGHT — VERMA BLITZ
         {
-            "keyword": "Aston Villa players celebrating 11th win",
-            "identity_keyword": "Aston Villa football team",
-            "text": "With this 2-1 victory, Aston Villa have now won a staggering 11 games in a row across all competitions, keeping them in the title race.",
+            "keyword": "Shafali Verma standout innings India women vs Sri Lanka",
+            "identity_keyword": "Shafali Verma India women's cricket",
+            "text": "Shafali Verma’s aggressive batting powered India to another victory in the second T20I, continuing their winning momentum against Sri Lanka.",
             "duration": 5,
             "visual_type": "identity"
         },
+
+        # 4️⃣ TEAM PERFORMANCE — TOP PARTNERSHIP
         {
-            "keyword": "Chelsea fans disappointed at stadium",
-            "identity_keyword": "Chelsea fc fans",
-            "text": "Chelsea look stunned after dropping points despite a strong start, leaving them with work to do as the new year approaches.",
+            "keyword": "Smriti Mandhana and Shafali Verma big partnership India",
+            "identity_keyword": "Smriti Mandhana world record partnership",
+            "text": "The Indian duo of Smriti Mandhana and Shafali Verma stitched a massive partnership in the fourth T20I, helping India post a huge total and sealing a 4-0 series lead.",
+            "duration": 5,
+            "visual_type": "identity"
+        },
+
+        # 5️⃣ PLAYER SPOTLIGHT — GUNALAN KAMALINI DEBUT
+        {
+            "keyword": "Gunalan Kamalini India women debut 5th T20I",
+            "identity_keyword": "Gunalan Kamalini India women cricketer",
+            "text": "Seventeen-year-old Gunalan Kamalini made her senior India debut in the fifth T20I, replacing Smriti Mandhana and heralding a new generation of talent.",
+            "duration": 5,
+            "visual_type": "identity"
+        },
+
+        # 6️⃣ ACTUAL LIVE MATCH MOMENT
+        {
+            "keyword": "Harmanpreet Kaur 68 India women vs Sri Lanka last T20I",
+            "identity_keyword": "Harmanpreet Kaur India women's cricket captain",
+            "text": "In the final match of the series, captain Harmanpreet Kaur anchored India’s innings with a powerful 68-run knock despite early setbacks.",
+            "duration": 5,
+            "visual_type": "identity"
+        },
+
+        # 7️⃣ EMOTIONAL MOMENT — TEAM SPIRIT
+        {
+            "keyword": "India women cricket team celebrating together",
+            "identity_keyword": "India women's national cricket team victory celebration",
+            "text": "Watch the India women’s team celebrate as they chase the series whitewash, showing exceptional teamwork, spirit, and hunger for excellence!",
             "duration": 5,
             "visual_type": "emotion"
         },
+
+        # 8️⃣ SRI LANKA FIGHTBACK & KEY BATTING
         {
-            "keyword": "Premier League football live broadcast",
-            "identity_keyword": "watch Chelsea vs Aston Villa highlights",
-            "text": "Catch the full highlights and post-match analysis of this Premier League classic on official streaming platforms now!",
+            "keyword": "Chamari Athapaththu Sri Lanka women fighting innings",
+            "identity_keyword": "Chamari Athapaththu Sri Lanka captain",
+            "text": "Sri Lanka fought back with crucial contributions from Chamari Athapaththu, showcasing resilience in their chase despite tough opposition.",
             "duration": 5,
+            "visual_type": "identity"
+        },
+
+        # 9️⃣ FIELDING & GAME MOMENTS
+        {
+            "keyword": "Arundhati Reddy wicket India women bowling",
+            "identity_keyword": "Arundhati Reddy India Women bowler",
+            "text": "Indian bowler Arundhati Reddy produced key breakthroughs with tight bowling and sharp fielding, contributing to India’s dominant series showing.",
+            "duration": 5,
+            "visual_type": "identity"
+        },
+
+        # 🔟 SERIES CONCLUSION & LOOK AHEAD
+        {
+            "keyword": "India reaffirms dominance in women's cricket",
+            "identity_keyword": "India women's national cricket team future",
+            "text": "With a commanding series performance, India Women continue their rise in international cricket as they prepare for future challenges, including the upcoming World T20 events.",
+            "duration": 6,
             "visual_type": "emotion"
         }
+
     ]
