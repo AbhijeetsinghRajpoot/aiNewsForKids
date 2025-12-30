@@ -1,4 +1,4 @@
-name: Run Story Generator
+name: Run Story Generator (Wikipedia + Pixabay)
 
 on:
   workflow_dispatch:
@@ -12,8 +12,6 @@ jobs:
 
     env:
       PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
-      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-      GOOGLE_CX: ${{ secrets.GOOGLE_CX }}
       COQUI_TOS_AGREED: "1"
 
     steps:
@@ -52,7 +50,7 @@ jobs:
             --index-url https://download.pytorch.org/whl/cpu
 
       # -----------------------------
-      # Install Python dependencies from requirements.txt
+      # Install Python dependencies
       # -----------------------------
       - name: Install Python dependencies
         run: |
