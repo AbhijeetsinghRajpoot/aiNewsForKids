@@ -1,92 +1,92 @@
 def get_storyboard():
     return [
 
-        # 1️⃣ INTRO — SERIES DOMINANCE & CONTEXT
+        # 1️⃣ INTRO — MONDAY NIGHT SHOCKER
         {
-            "keyword": "India women vs Sri Lanka women T20I series highlights",
-            "identity_keyword": "India women's national cricket team vs Sri Lanka women",
-            "text": "The India women's cricket team has dominated the Sri Lanka tour, leading the five-match series with commanding victories and showcasing world-class performances!",
+            "keyword": "Falcons vs Rams Monday Night Football 2025 highlights",
+            "identity_keyword": "Atlanta Falcons vs Los Angeles Rams Mercedes-Benz Stadium",
+            "text": "The Atlanta Falcons pulled off a massive Monday Night upset, stunning the playoff-bound Rams 27-24 in a thriller that saw records shatter!",
             "duration": 5,
             "visual_type": "emotion"
         },
 
-        # 2️⃣ MATCH 1 HIGHLIGHT — INDIAN WIN
+        # 2️⃣ PLAYER SPOTLIGHT — BIJAN'S HISTORIC NIGHT
         {
-            "keyword": "India women beat Sri Lanka women 1st T20I",
-            "identity_keyword": "Jemimah Rodrigues India women",
-            "text": "In the opening T20I, India Women secured an emphatic win over Sri Lanka Women, setting the tone for the series with a confident performance.",
+            "keyword": "Bijan Robinson record breaking game vs Rams",
+            "identity_keyword": "Bijan Robinson Atlanta Falcons running back",
+            "text": "Bijan Robinson was unstoppable, racking up 229 scrimmage yards to break the Falcons' single-season record previously held by William Andrews!",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 3️⃣ MATCH 2 HIGHLIGHT — VERMA BLITZ
+        # 3️⃣ BIG PLAY — THE 93-YARD DASH
         {
-            "keyword": "Shafali Verma standout innings India women vs Sri Lanka",
-            "identity_keyword": "Shafali Verma India women's cricket",
-            "text": "Shafali Verma’s aggressive batting powered India to another victory in the second T20I, continuing their winning momentum against Sri Lanka.",
+            "keyword": "Bijan Robinson 93 yard touchdown run vs Rams",
+            "identity_keyword": "Bijan Robinson longest run Falcons history",
+            "text": "In the second quarter, Bijan exploded for a 93-yard rushing touchdown—the longest in franchise history—leaving the Rams defense in the dust.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 4️⃣ TEAM PERFORMANCE — TOP PARTNERSHIP
+        # 4️⃣ DEFENSE — JESSIE BATES III PICK-SIX
         {
-            "keyword": "Smriti Mandhana and Shafali Verma big partnership India",
-            "identity_keyword": "Smriti Mandhana world record partnership",
-            "text": "The Indian duo of Smriti Mandhana and Shafali Verma stitched a massive partnership in the fourth T20I, helping India post a huge total and sealing a 4-0 series lead.",
+            "keyword": "Jessie Bates III pick six vs Matthew Stafford",
+            "identity_keyword": "Jessie Bates III Atlanta Falcons safety",
+            "text": "Safety Jessie Bates III joined legends like Deion Sanders with a 34-yard pick-six, marking his third straight season with an interception return TD!",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 5️⃣ PLAYER SPOTLIGHT — GUNALAN KAMALINI DEBUT
+        # 5️⃣ QB BATTLE — STAFFORD'S MILESTONES & MISTAKES
         {
-            "keyword": "Gunalan Kamalini India women debut 5th T20I",
-            "identity_keyword": "Gunalan Kamalini India women cricketer",
-            "text": "Seventeen-year-old Gunalan Kamalini made her senior India debut in the fifth T20I, replacing Smriti Mandhana and heralding a new generation of talent.",
+            "keyword": "Matthew Stafford stats vs Falcons 2025",
+            "identity_keyword": "Matthew Stafford Rams quarterback records",
+            "text": "Matthew Stafford passed Ben Roethlisberger for 6th all-time in passing yards, but three costly interceptions kept the Rams fighting from behind.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 6️⃣ ACTUAL LIVE MATCH MOMENT
+        # 6️⃣ THE COMEBACK — RAMS FIGHT BACK
         {
-            "keyword": "Harmanpreet Kaur 68 India women vs Sri Lanka last T20I",
-            "identity_keyword": "Harmanpreet Kaur India women's cricket captain",
-            "text": "In the final match of the series, captain Harmanpreet Kaur anchored India’s innings with a powerful 68-run knock despite early setbacks.",
-            "duration": 5,
-            "visual_type": "identity"
-        },
-
-        # 7️⃣ EMOTIONAL MOMENT — TEAM SPIRIT
-        {
-            "keyword": "India women cricket team celebrating together",
-            "identity_keyword": "India women's national cricket team victory celebration",
-            "text": "Watch the India women’s team celebrate as they chase the series whitewash, showing exceptional teamwork, spirit, and hunger for excellence!",
+            "keyword": "Puka Nacua touchdown vs Falcons 4th quarter",
+            "identity_keyword": "Rams comeback vs Falcons Week 17",
+            "text": "Despite a 21-0 halftime deficit, the Rams rallied as Stafford found Puka Nacua for an 11-yard score to tie the game late in the fourth!",
             "duration": 5,
             "visual_type": "emotion"
         },
 
-        # 8️⃣ SRI LANKA FIGHTBACK & KEY BATTING
+        # 7️⃣ SPECIAL TEAMS — JARED VERSE BLOCKED FG
         {
-            "keyword": "Chamari Athapaththu Sri Lanka women fighting innings",
-            "identity_keyword": "Chamari Athapaththu Sri Lanka captain",
-            "text": "Sri Lanka fought back with crucial contributions from Chamari Athapaththu, showcasing resilience in their chase despite tough opposition.",
+            "keyword": "Jared Verse blocked field goal return touchdown",
+            "identity_keyword": "Jared Verse Rams defensive end",
+            "text": "The Rams' Jared Verse provided a massive spark by blocking a field goal and returning it 76 yards for a touchdown, swinging the momentum completely.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 9️⃣ FIELDING & GAME MOMENTS
+        # 8️⃣ ROOKIE SENSATION — XAVIER WATTS
         {
-            "keyword": "Arundhati Reddy wicket India women bowling",
-            "identity_keyword": "Arundhati Reddy India Women bowler",
-            "text": "Indian bowler Arundhati Reddy produced key breakthroughs with tight bowling and sharp fielding, contributing to India’s dominant series showing.",
+            "keyword": "Xavier Watts two interceptions vs Matthew Stafford",
+            "identity_keyword": "Xavier Watts Falcons rookie safety record",
+            "text": "Rookie Xavier Watts was a ball hawk, snagging two interceptions to set a new Falcons franchise record for most picks by a rookie safety!",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 🔟 SERIES CONCLUSION & LOOK AHEAD
+        # 9️⃣ CLUTCH MOMENT — ZANE GONZALEZ FOR THE WIN
         {
-            "keyword": "India reaffirms dominance in women's cricket",
-            "identity_keyword": "India women's national cricket team future",
-            "text": "With a commanding series performance, India Women continue their rise in international cricket as they prepare for future challenges, including the upcoming World T20 events.",
+            "keyword": "Zane Gonzalez game winning field goal vs Rams",
+            "identity_keyword": "Falcons kicker Zane Gonzalez clutch",
+            "text": "With just 21 seconds left, kicker Zane Gonzalez nailed a 51-yard field goal to seal the victory and send the Atlanta fans into a frenzy!",
+            "duration": 5,
+            "visual_type": "emotion"
+        },
+
+        # 🔟 CONCLUSION — SPOILER ALERT
+        {
+            "keyword": "Falcons playoff spoiler win vs Rams",
+            "identity_keyword": "Raheem Morris Falcons victory over Sean McVay",
+            "text": "Coach Raheem Morris defeats his former mentor Sean McVay as the Falcons prove they are a dangerous young team heading into 2026!",
             "duration": 6,
             "visual_type": "emotion"
         }
