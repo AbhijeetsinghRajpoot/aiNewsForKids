@@ -1,69 +1,65 @@
 import os
 import sys
-import traceback
-from datetime import datetime
 
 import storyboard_data
 import story_generator
 import youtube_uploader
 
-
 # -----------------------------
-# CONSTANTS (SHORTS OPTIMIZED)
+# CONSTANTS
 # -----------------------------
 MAX_TITLE_LENGTH = 95  # YouTube Shorts safe
-MIN_SCENES_REQUIRED = 3
+DEFAULT_HASHTAGS = "#shorts #collegefootball #football #sports #trending"
 
-DEFAULT_HASHTAGS = (
-    "#shorts #cricket #indiancricket #trending #sports "
-    "#viral #cricketshorts"
-)
-
-SHORTS_MODE = os.getenv("SHORTS_MODE", "false").lower() == "true"
+ASSETS_DIR = "assets"
+VOICE_FILE = os.path.join(ASSETS_DIR, "voice.wav")
 
 
 # -----------------------------
-# TITLE BUILDER (HOOK-FIRST)
+# SAFETY: ENSURE REQUIRED DIRS
+# -----------------------------
+def ensure_assets():
+    """
+    Ensure assets directory exists (CI-safe)
+    """
+    os.makedirs(ASSETS_DIR, exist_ok=True)
+    print(f"Assets directory ready: {ASSETS_DIR}")
+
+
+# -----------------------------
+# TITLE (SHORTS OPTIMIZED)
 # -----------------------------
 def build_title(scene):
-    """
-    Build a Shorts-optimized, hook-driven title
-    """
-    raw_title = (
+    title = (
         scene.get("title")
         or scene.get("keyword")
-        or "Indian Cricket Rising Stars"
+        or "🔥 College Football Bowl Game Highlights"
     ).strip()
 
-    # Strong hook for Shorts
-    if SHORTS_MODE:
-        raw_title = f"🔥 {raw_title}"
+    # Emoji hook for Shorts
+    if not title.startswith(("🔥", "🏈", "🚨")):
+        title = f"🔥 {title}"
 
-    if len(raw_title) > MAX_TITLE_LENGTH:
-        raw_title = raw_title[: MAX_TITLE_LENGTH - 3] + "..."
+    if len(title) > MAX_TITLE_LENGTH:
+        title = title[: MAX_TITLE_LENGTH - 3] + "..."
 
-    return raw_title
+    return title
 
 
 # -----------------------------
-# DESCRIPTION BUILDER (CTR SAFE)
+# DESCRIPTION
 # -----------------------------
 def build_description(scene):
-    """
-    Build Shorts-friendly YouTube description
-    """
-    base_description = scene.get(
+    description = scene.get(
         "description",
-        "Latest Indian cricket updates, highlights, and rising stars."
+        "High-energy college football bowl game highlights."
     )
 
-    description = (
-        f"{base_description}\n\n"
-        "⚡ Fast-paced cricket Shorts\n"
-        "🏏 Domestic & International updates\n"
-        "📈 Daily trending sports content\n\n"
-        "📸 Images: Wikimedia Commons (Creative Commons)\n"
-        "🎬 Videos: Pixabay (Royalty-Free)\n\n"
+    description += (
+        "\n\n"
+        "🎬 Visuals: Pixabay (Royalty Free)\n"
+        "📸 Images: Wikimedia Commons (CC)\n"
+        "🎙️ Voice: AI Generated\n\n"
         f"{DEFAULT_HASHTAGS}"
     )
 
@@ -71,61 +67,48 @@ def build_description(scene):
 
 
 # -----------------------------
-# STORYBOARD VALIDATION
-# -----------------------------
-def validate_storyboard(storyboard):
-    if not storyboard or not isinstance(storyboard, list):
-        raise RuntimeError("Storyboard is empty or invalid")
-
-    if len(storyboard) < MIN_SCENES_REQUIRED:
-        raise RuntimeError(
-            f"Storyboard too short ({len(storyboard)} scenes). "
-            f"Minimum required: {MIN_SCENES_REQUIRED}"
-        )
-
-    for idx, scene in enumerate(storyboard):
-        if "text" not in scene or not scene["text"].strip():
-            raise RuntimeError(f"Scene {idx} missing text")
-        if "keyword" not in scene:
-            raise RuntimeError(f"Scene {idx} missing keyword")
-
-
-# -----------------------------
 # MAIN AUTOMATION
 # -----------------------------
 def run_automation():
-    start_time = datetime.utcnow()
-    print("STEP 1: Loading storyboard...")
+    print("STEP 0: Preparing environment...")
+    ensure_assets()
 
+    print("STEP 1: Loading storyboard...")
     storyboard = storyboard_data.get_storyboard()
-    validate_storyboard(storyboard)
+
+    if not storyboard or not isinstance(storyboard, list):
+        raise RuntimeError("Storyboard is empty or invalid")
 
     # -----------------------------
-    # Title & Description
+    # TITLE & DESCRIPTION
     # -----------------------------
     first_scene = storyboard[0]
     video_title = build_title(first_scene)
     video_description = build_description(first_scene)
 
     print(f"VIDEO TITLE: {video_title}")
-    print(f"SHORTS MODE: {'ENABLED' if SHORTS_MODE else 'DISABLED'}")
+    print("SHORTS MODE: ENABLED")
 
     # -----------------------------
-    # Generate Video
+    # GENERATE VIDEO
     # -----------------------------
     print("STEP 2: Generating video...")
     video_file = story_generator.create_video(
         storyboard=storyboard,
-        shorts_mode=SHORTS_MODE  # 🔥 enables fast cuts & captions
+        voice_path=VOICE_FILE,   # ✅ EXPLICIT PATH
+        shorts_mode=True
     )
 
     if not video_file or not os.path.exists(video_file):
-        raise RuntimeError("Video generation failed or file not found")
+        raise RuntimeError("Video generation failed — file not found")
 
-    print(f"✅ Video generated: {video_file}")
+    if not os.path.exists(VOICE_FILE):
+        raise RuntimeError("TTS failed — voice.wav not created")
+
+    print(f"Video generated successfully: {video_file}")
 
     # -----------------------------
-    # Upload to YouTube
+    # UPLOAD TO YOUTUBE
     # -----------------------------
     print("STEP 3: Uploading to YouTube...")
     youtube_uploader.upload_to_youtube(
@@ -134,8 +117,7 @@ def run_automation():
         description=video_description,
     )
 
-    elapsed = (datetime.utcnow() - start_time).total_seconds()
-    print(f"🚀 AUTOMATION COMPLETED in {elapsed:.1f}s")
+    print("✅ AUTOMATION COMPLETED SUCCESSFULLY 🚀")
 
 
 # -----------------------------
@@ -146,5 +128,5 @@ if __name__ == "__main__":
         run_automation()
     except Exception as e:
         print("❌ AUTOMATION FAILED")
-        traceback.print_exc()
+        print(str(e))
         sys.exit(1)
