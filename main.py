@@ -6,7 +6,7 @@ import story_generator
 import youtube_uploader
 
 
-MAX_TITLE_LENGTH = 95  # Safe limit for YouTube Shorts
+MAX_TITLE_LENGTH = 95  # Safe for YouTube Shorts
 DEFAULT_HASHTAGS = "#shorts #cricket #womenscricket #trending #sports"
 
 
@@ -18,9 +18,7 @@ def build_title(scene):
         scene.get("title")
         or scene.get("keyword")
         or "Cricket Highlights"
-    )
-
-    title = title.strip()
+    ).strip()
 
     if len(title) > MAX_TITLE_LENGTH:
         title = title[:MAX_TITLE_LENGTH - 3] + "..."
@@ -51,19 +49,18 @@ def run_automation():
     if not storyboard or not isinstance(storyboard, list):
         raise RuntimeError("Storyboard is empty or invalid")
 
-    # ----------------------------------
+    # -----------------------------
     # Title & Description
-    # ----------------------------------
+    # -----------------------------
     first_scene = storyboard[0]
-
     video_title = build_title(first_scene)
     video_description = build_description(first_scene)
 
     print(f"VIDEO TITLE: {video_title}")
 
-    # ----------------------------------
+    # -----------------------------
     # Generate Video
-    # ----------------------------------
+    # -----------------------------
     print("STEP 2: Generating video...")
     video_file = story_generator.create_video(storyboard)
 
@@ -72,12 +69,12 @@ def run_automation():
 
     print(f"Video generated successfully: {video_file}")
 
-    # ----------------------------------
-    # Upload to YouTube (✅ FIXED HERE)
-    # ----------------------------------
+    # -----------------------------
+    # Upload to YouTube ✅ FIXED
+    # -----------------------------
     print("STEP 3: Uploading to YouTube...")
     youtube_uploader.upload_to_youtube(
-        file_path=video_file,     # ✅ CORRECT ARGUMENT NAME
+        video_file=video_file,      # ✅ MUST match uploader signature
         title=video_title,
         description=video_description,
     )
