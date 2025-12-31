@@ -4,7 +4,7 @@ def get_storyboard():
         # 1️⃣ INTRO — NBA SHOWDOWN
         {
             "keyword": "Lakers vs Pistons NBA game highlights",
-            "identity_keyword": "Los Angeles Lakers vs Detroit Pistons NBA",
+            "identity_keyword": "Los_Angeles_Lakers",
             "text": "The Los Angeles Lakers faced the Detroit Pistons in an electrifying NBA clash as young stars and veterans collided in a must-watch matchup!",
             "duration": 5,
             "visual_type": "emotion"
@@ -13,7 +13,7 @@ def get_storyboard():
         # 2️⃣ LAKERS CONTEXT — JJ REDICK ERA
         {
             "keyword": "Lakers new season under JJ Redick",
-            "identity_keyword": "JJ Redick Los Angeles Lakers head coach",
+            "identity_keyword": "JJ_Redick",
             "text": "Under new head coach JJ Redick, the Lakers are redefining their style with faster pace, smarter spacing, and a new offensive identity.",
             "duration": 5,
             "visual_type": "identity"
@@ -22,7 +22,7 @@ def get_storyboard():
         # 3️⃣ STAR WATCH — CADE CUNNINGHAM
         {
             "keyword": "Cade Cunningham Pistons leadership performance",
-            "identity_keyword": "Cade Cunningham Detroit Pistons",
+            "identity_keyword": "Cade_Cunningham",
             "text": "Detroit’s Cade Cunningham led from the front, showcasing elite playmaking and scoring as he continues to evolve into a franchise cornerstone.",
             "duration": 5,
             "visual_type": "identity"
@@ -31,7 +31,7 @@ def get_storyboard():
         # 4️⃣ SHOOTING SPARK — MARCUS SASSER
         {
             "keyword": "Marcus Sasser three pointers vs Lakers",
-            "identity_keyword": "Marcus Sasser Detroit Pistons",
+            "identity_keyword": "Marcus_Sasser",
             "text": "Marcus Sasser provided a major spark for Detroit, knocking down clutch shots and stretching the Lakers’ defense with his deep shooting.",
             "duration": 5,
             "visual_type": "identity"
@@ -40,7 +40,7 @@ def get_storyboard():
         # 5️⃣ ROOKIE ENERGY — RONALD HOLLAND II
         {
             "keyword": "Ronald Holland II rookie highlights Pistons",
-            "identity_keyword": "Ronald Holland II Detroit Pistons rookie",
+            "identity_keyword": "Ronald_Holland_II",
             "text": "Rookie Ronald Holland II impressed with his athleticism, defense, and fearlessness, giving Pistons fans a glimpse of the future.",
             "duration": 5,
             "visual_type": "identity"
@@ -49,7 +49,7 @@ def get_storyboard():
         # 6️⃣ LAKERS FRONTCOURT — JAXSON HAYES
         {
             "keyword": "Jaxson Hayes dunks rebounds Lakers",
-            "identity_keyword": "Jaxson Hayes Los Angeles Lakers",
+            "identity_keyword": "Jaxson_Hayes",
             "text": "Jaxson Hayes brought energy in the paint for the Lakers, finishing strong at the rim and making his presence felt on defense.",
             "duration": 5,
             "visual_type": "identity"
@@ -58,7 +58,7 @@ def get_storyboard():
         # 7️⃣ GAME FLOW — BACK AND FORTH ACTION
         {
             "keyword": "Pistons vs Lakers close game fourth quarter",
-            "identity_keyword": "Detroit Pistons vs Los Angeles Lakers NBA game",
+            "identity_keyword": "Detroit_Pistons",
             "text": "The game stayed competitive with momentum swinging both ways, as young Pistons stars matched the Lakers possession for possession.",
             "duration": 5,
             "visual_type": "emotion"
@@ -67,7 +67,7 @@ def get_storyboard():
         # 8️⃣ CROWD & ATMOSPHERE
         {
             "keyword": "NBA crowd Lakers arena game night",
-            "identity_keyword": "Los Angeles Lakers home arena crowd",
+            "identity_keyword": "Crypto.com_Arena",
             "text": "The atmosphere was electric as Lakers fans reacted to every big play in a night filled with highlights and intensity.",
             "duration": 5,
             "visual_type": "emotion"
@@ -76,7 +76,7 @@ def get_storyboard():
         # 9️⃣ BIG PICTURE — WHAT THIS GAME MEANS
         {
             "keyword": "Lakers Pistons season implications",
-            "identity_keyword": "NBA regular season Lakers Pistons",
+            "identity_keyword": "National_Basketball_Association",
             "text": "For the Pistons, it was another step in their rebuild, while the Lakers continued testing combinations under their new system.",
             "duration": 5,
             "visual_type": "emotion"
@@ -85,10 +85,9 @@ def get_storyboard():
         # 🔟 OUTRO — SHORTS CTA
         {
             "keyword": "Lakers vs Pistons NBA highlights recap",
-            "identity_keyword": "Los Angeles Lakers Detroit Pistons NBA matchup",
+            "identity_keyword": "Los_Angeles_Lakers",
             "text": "Was this the Pistons’ future shining through, or the Lakers building momentum? Drop your thoughts and follow for more NBA Shorts!",
             "duration": 6,
             "visual_type": "emotion"
         }
-
     ]
