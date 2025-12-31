@@ -40,7 +40,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
-          sudo sed -i 's/<policy domain="path" rights="none" pattern="@\*"/>/<policy domain="path" rights="read|write" pattern="@\*"/>/g' /etc/ImageMagick-6/policy.xml
+
 
       # -----------------------------
       # Increase file limits
