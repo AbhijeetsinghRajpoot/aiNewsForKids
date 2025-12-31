@@ -17,11 +17,9 @@ PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY is not set")
 
-# ============================================================
-# HEADERS (IMPORTANT FOR WIKIPEDIA)
-# ============================================================
 HEADERS = {
-    "User-Agent": "YouTubeShortsBot/1.0 (contact@example.com)"
+    "User-Agent": "Mozilla/5.0 (YouTubeShortsBot/1.0)",
+    "Referer": "https://en.wikipedia.org/"
 }
 
 # ============================================================
@@ -60,12 +58,12 @@ MAX_SHORT_DURATION = 59
 
 KEYWORD_FALLBACKS = [
     "cricket stadium crowd",
-    "domestic cricket celebration",
-    "indian cricket fans cheering"
+    "domestic cricket match India",
+    "cricket celebration"
 ]
 
 # ============================================================
-# IMAGE FITTING
+# IMAGE UTILITIES
 # ============================================================
 def fit_image_to_viewport(src, dst):
     with Image.open(src) as img:
@@ -148,69 +146,35 @@ def download_pixabay_image(keyword, folder):
         return None
 
 # ============================================================
-# WIKIPEDIA IMAGE (SAFE + VALIDATED)
+# ✅ WIKIMEDIA REST IMAGE (SAFE & FINAL)
 # ============================================================
 def download_wikipedia_image(keyword, folder):
     try:
-        search_url = "https://en.wikipedia.org/w/api.php"
+        title = keyword.replace(" ", "_")
+        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{title}"
 
-        search_params = {
-            "action": "query",
-            "format": "json",
-            "list": "search",
-            "srsearch": keyword,
-            "srlimit": 1
-        }
+        r = requests.get(url, headers=HEADERS, timeout=10)
+        r.raise_for_status()
+        data = r.json()
 
-        search_res = requests.get(
-            search_url, params=search_params, headers=HEADERS, timeout=10
-        ).json()
-
-        if not search_res.get("query", {}).get("search"):
+        thumbnail = data.get("thumbnail", {}).get("source")
+        if not thumbnail:
             return None
 
-        title = search_res["query"]["search"][0]["title"]
-
-        image_params = {
-            "action": "query",
-            "format": "json",
-            "titles": title,
-            "prop": "pageimages",
-            "piprop": "thumbnail",
-            "pithumbsize": 1200
-        }
-
-        image_res = requests.get(
-            search_url, params=image_params, headers=HEADERS, timeout=10
-        ).json()
-
-        pages = image_res.get("query", {}).get("pages", {})
-        page = next(iter(pages.values()), {})
-
-        if "thumbnail" not in page:
-            return None
-
-        img_url = page["thumbnail"]["source"]
-
-        # ❌ Skip SVG files
-        if img_url.lower().endswith(".svg"):
-            print("[WIKIPEDIA] SVG skipped")
+        if thumbnail.lower().endswith(".svg"):
             return None
 
         path = os.path.join(folder, "wikipedia.jpg")
-        r = requests.get(img_url, headers=HEADERS, timeout=10)
-        r.raise_for_status()
+
+        img = requests.get(thumbnail, headers=HEADERS, timeout=10)
+        img.raise_for_status()
 
         with open(path, "wb") as f:
-            f.write(r.content)
+            f.write(img.content)
 
-        # ✅ Validate image
-        try:
-            with Image.open(path) as img:
-                img.verify()
-        except Exception:
-            print("[WIKIPEDIA] Invalid image")
-            return None
+        # Validate image
+        with Image.open(path) as im:
+            im.verify()
 
         print(f"[WIKIPEDIA IMAGE] {keyword}")
         return path
@@ -235,13 +199,11 @@ def ken_burns(clip, zoom=1.12):
 # TEXT FALLBACK
 # ============================================================
 def create_text_graphic(text, folder):
-    img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (12, 12, 12))
+    img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (10, 10, 10))
     draw = ImageDraw.Draw(img)
     font = ImageFont.load_default()
-
-    wrapped = "\n".join(text[i:i + 32] for i in range(0, len(text), 32))
-    draw.text((50, 420), wrapped, fill="white", font=font, spacing=14)
-
+    wrapped = "\n".join(text[i:i + 30] for i in range(0, len(text), 30))
+    draw.text((40, 420), wrapped, fill="white", font=font, spacing=12)
     path = os.path.join(folder, "fallback.jpg")
     img.save(path, "JPEG", quality=95)
     return path
@@ -281,7 +243,7 @@ def create_video(storyboard):
 
         clip = None
 
-        # ---------- EMOTION ----------
+        # ---------- PIXABAY VIDEO ----------
         if visual_type == "emotion":
             for kw in [keyword] + KEYWORD_FALLBACKS:
                 if not kw:
@@ -291,23 +253,24 @@ def create_video(storyboard):
                     clip = normalize_video(video, duration)
                     break
 
-        # ---------- IDENTITY ----------
-        if not clip:
-            img = None
-            if visual_type == "identity" and identity_kw:
-                img = download_wikipedia_image(identity_kw, folder)
-
-            if not img and keyword:
-                img = download_pixabay_image(keyword, folder)
-
+        # ---------- WIKIPEDIA IMAGE ----------
+        if not clip and visual_type == "identity" and identity_kw:
+            img = download_wikipedia_image(identity_kw, folder)
             if img:
                 try:
                     safe = os.path.join(folder, "safe.jpg")
                     fit_image_to_viewport(img, safe)
                     clip = ken_burns(ImageClip(safe).set_duration(duration))
-                except Exception as e:
-                    print("[IMAGE ERROR]", e)
+                except Exception:
                     clip = None
+
+        # ---------- PIXABAY IMAGE ----------
+        if not clip and keyword:
+            img = download_pixabay_image(keyword, folder)
+            if img:
+                safe = os.path.join(folder, "safe.jpg")
+                fit_image_to_viewport(img, safe)
+                clip = ken_burns(ImageClip(safe).set_duration(duration))
 
         # ---------- TEXT FALLBACK ----------
         if not clip:
@@ -318,9 +281,6 @@ def create_video(storyboard):
 
         if total >= MAX_SHORT_DURATION:
             break
-
-    if not segments:
-        raise RuntimeError("No segments created")
 
     final = concatenate_videoclips(segments, method="compose")
     final.write_videofile(
