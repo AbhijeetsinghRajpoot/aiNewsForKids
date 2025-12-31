@@ -3,7 +3,7 @@ name: Run Story Generator (Wikipedia + Pixabay)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at 12:00 AM UTC
+    - cron: '0 0 * * *'
 
 jobs:
   build:
@@ -13,6 +13,9 @@ jobs:
     env:
       PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
       COQUI_TOS_AGREED: "1"
+      SHORTS_MODE: "true"
+      IMAGEMAGICK_BINARY: "/usr/bin/convert"
+      FFMPEG_BINARY: "/usr/bin/ffmpeg"
 
     steps:
       # -----------------------------
@@ -37,7 +40,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
-          sudo sed -i 's/policy domain="path" rights="none"/policy domain="path" rights="read|write"/g' /etc/ImageMagick-6/policy.xml
+          sudo sed -i 's/<policy domain="path" rights="none" pattern="@\*"/>/<policy domain="path" rights="read|write" pattern="@\*"/>/g' /etc/ImageMagick-6/policy.xml
+
+      # -----------------------------
+      # Increase file limits
+      # -----------------------------
+      - name: Increase file limits
+        run: |
+          ulimit -n 4096
 
       # -----------------------------
       # Install CPU-only PyTorch
