@@ -6,7 +6,7 @@ import story_generator
 import youtube_uploader
 
 
-MAX_TITLE_LENGTH = 95  # Safe for YouTube Shorts
+MAX_TITLE_LENGTH = 95  # Safe limit for YouTube Shorts
 DEFAULT_HASHTAGS = "#shorts #cricket #womenscricket #trending #sports"
 
 
@@ -73,11 +73,11 @@ def run_automation():
     print(f"Video generated successfully: {video_file}")
 
     # ----------------------------------
-    # Upload to YouTube
+    # Upload to YouTube (✅ FIXED HERE)
     # ----------------------------------
     print("STEP 3: Uploading to YouTube...")
     youtube_uploader.upload_to_youtube(
-        video_path=video_file,
+        file_path=video_file,     # ✅ CORRECT ARGUMENT NAME
         title=video_title,
         description=video_description,
     )
