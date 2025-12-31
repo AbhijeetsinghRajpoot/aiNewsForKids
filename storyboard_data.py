@@ -1,92 +1,92 @@
 def get_storyboard():
     return [
 
-        # 1️⃣ INTRO — MONDAY NIGHT SHOCKER
+        # 1️⃣ INTRO — MATCH CONTEXT
         {
-            "keyword": "Falcons vs Rams Monday Night Football 2025 highlights",
-            "identity_keyword": "Atlanta Falcons vs Los Angeles Rams Mercedes-Benz Stadium",
-            "text": "The Atlanta Falcons pulled off a massive Monday Night upset, stunning the playoff-bound Rams 27-24 in a thriller that saw records shatter!",
+            "keyword": "Mumbai vs Goa Vijay Hazare Trophy 2025 highlights",
+            "identity_keyword": "Mumbai cricket team vs Goa cricket team Vijay Hazare Trophy",
+            "text": "In the Vijay Hazare Trophy 2025, Mumbai faced Goa in a high-scoring Group C encounter that grabbed national attention.",
             "duration": 5,
             "visual_type": "emotion"
         },
 
-        # 2️⃣ PLAYER SPOTLIGHT — BIJAN'S HISTORIC NIGHT
+        # 2️⃣ TOURNAMENT CONTEXT — VIJAY HAZARE TROPHY
         {
-            "keyword": "Bijan Robinson record breaking game vs Rams",
-            "identity_keyword": "Bijan Robinson Atlanta Falcons running back",
-            "text": "Bijan Robinson was unstoppable, racking up 229 scrimmage yards to break the Falcons' single-season record previously held by William Andrews!",
+            "keyword": "Vijay Hazare Trophy 2025 match update",
+            "identity_keyword": "Vijay Hazare Trophy List A cricket tournament India",
+            "text": "The Vijay Hazare Trophy is India’s premier domestic one-day tournament, featuring the country’s top state teams and rising stars.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 3️⃣ BIG PLAY — THE 93-YARD DASH
+        # 3️⃣ BATTING MASTERCLASS — SARFARAZ KHAN
         {
-            "keyword": "Bijan Robinson 93 yard touchdown run vs Rams",
-            "identity_keyword": "Bijan Robinson longest run Falcons history",
-            "text": "In the second quarter, Bijan exploded for a 93-yard rushing touchdown—the longest in franchise history—leaving the Rams defense in the dust.",
+            "keyword": "Sarfaraz Khan 157 runs vs Goa",
+            "identity_keyword": "Sarfaraz Khan Indian cricketer",
+            "text": "Sarfaraz Khan delivered a brutal batting masterclass, smashing 157 runs in rapid time to completely dominate the Goa bowling attack.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 4️⃣ DEFENSE — JESSIE BATES III PICK-SIX
+        # 4️⃣ RECORD BREAKING INNINGS — SARFARAZ
         {
-            "keyword": "Jessie Bates III pick six vs Matthew Stafford",
-            "identity_keyword": "Jessie Bates III Atlanta Falcons safety",
-            "text": "Safety Jessie Bates III joined legends like Deion Sanders with a 34-yard pick-six, marking his third straight season with an interception return TD!",
+            "keyword": "Sarfaraz Khan record breaking innings Mumbai",
+            "identity_keyword": "Sarfaraz Khan domestic cricket records",
+            "text": "His innings featured multiple sixes and one of the fastest centuries of the season, putting Mumbai firmly in control.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 5️⃣ QB BATTLE — STAFFORD'S MILESTONES & MISTAKES
+        # 5️⃣ TEAM TOTAL — MUMBAI POST MASSIVE SCORE
         {
-            "keyword": "Matthew Stafford stats vs Falcons 2025",
-            "identity_keyword": "Matthew Stafford Rams quarterback records",
-            "text": "Matthew Stafford passed Ben Roethlisberger for 6th all-time in passing yards, but three costly interceptions kept the Rams fighting from behind.",
-            "duration": 5,
-            "visual_type": "identity"
-        },
-
-        # 6️⃣ THE COMEBACK — RAMS FIGHT BACK
-        {
-            "keyword": "Puka Nacua touchdown vs Falcons 4th quarter",
-            "identity_keyword": "Rams comeback vs Falcons Week 17",
-            "text": "Despite a 21-0 halftime deficit, the Rams rallied as Stafford found Puka Nacua for an 11-yard score to tie the game late in the fourth!",
+            "keyword": "Mumbai 444 runs vs Goa scorecard",
+            "identity_keyword": "Mumbai cricket team List A records",
+            "text": "Powered by Sarfaraz Khan’s onslaught, Mumbai posted a mammoth total of over 440 runs, one of their biggest scores in Vijay Hazare history.",
             "duration": 5,
             "visual_type": "emotion"
         },
 
-        # 7️⃣ SPECIAL TEAMS — JARED VERSE BLOCKED FG
+        # 6️⃣ ARJUN TENDULKAR — AGAINST FORMER TEAM
         {
-            "keyword": "Jared Verse blocked field goal return touchdown",
-            "identity_keyword": "Jared Verse Rams defensive end",
-            "text": "The Rams' Jared Verse provided a massive spark by blocking a field goal and returning it 76 yards for a touchdown, swinging the momentum completely.",
+            "keyword": "Arjun Tendulkar bowling vs Mumbai",
+            "identity_keyword": "Arjun Tendulkar Indian cricketer",
+            "text": "Playing for Goa against his former side, Arjun Tendulkar faced a tough outing with the ball as Mumbai’s batters went on the attack.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 8️⃣ ROOKIE SENSATION — XAVIER WATTS
+        # 7️⃣ ARJUN WITH THE BAT — FIGHTBACK
         {
-            "keyword": "Xavier Watts two interceptions vs Matthew Stafford",
-            "identity_keyword": "Xavier Watts Falcons rookie safety record",
-            "text": "Rookie Xavier Watts was a ball hawk, snagging two interceptions to set a new Falcons franchise record for most picks by a rookie safety!",
+            "keyword": "Arjun Tendulkar batting vs Mumbai",
+            "identity_keyword": "Arjun Tendulkar batting style",
+            "text": "Arjun Tendulkar also contributed with the bat, showing resilience as Goa attempted to chase down the towering target.",
             "duration": 5,
             "visual_type": "identity"
         },
 
-        # 9️⃣ CLUTCH MOMENT — ZANE GONZALEZ FOR THE WIN
+        # 8️⃣ GOA CHASE — PRESSURE SITUATION
         {
-            "keyword": "Zane Gonzalez game winning field goal vs Rams",
-            "identity_keyword": "Falcons kicker Zane Gonzalez clutch",
-            "text": "With just 21 seconds left, kicker Zane Gonzalez nailed a 51-yard field goal to seal the victory and send the Atlanta fans into a frenzy!",
+            "keyword": "Goa run chase vs Mumbai",
+            "identity_keyword": "Goa cricket team domestic cricket",
+            "text": "Despite moments of resistance, the pressure of the huge target kept mounting on Goa throughout the chase.",
             "duration": 5,
             "visual_type": "emotion"
         },
 
-        # 🔟 CONCLUSION — SPOILER ALERT
+        # 9️⃣ MATCH RESULT — MUMBAI DOMINANCE
         {
-            "keyword": "Falcons playoff spoiler win vs Rams",
-            "identity_keyword": "Raheem Morris Falcons victory over Sean McVay",
-            "text": "Coach Raheem Morris defeats his former mentor Sean McVay as the Falcons prove they are a dangerous young team heading into 2026!",
+            "keyword": "Mumbai defeated Goa Vijay Hazare Trophy",
+            "identity_keyword": "Mumbai cricket team victories Vijay Hazare Trophy",
+            "text": "Mumbai eventually sealed a commanding victory over Goa, underlining their strength and depth in domestic cricket.",
+            "duration": 5,
+            "visual_type": "emotion"
+        },
+
+        # 🔟 CONCLUSION — SELECTION TALK & IMPACT
+        {
+            "keyword": "Sarfaraz Khan India selection Vijay Hazare",
+            "identity_keyword": "Sarfaraz Khan India national cricket team",
+            "text": "Sarfaraz Khan’s sensational knock reignited discussions around national selection, while the match highlighted Mumbai’s dominance in the tournament.",
             "duration": 6,
             "visual_type": "emotion"
         }
