@@ -3,90 +3,90 @@ def get_storyboard():
 
         # 1️⃣ SUPER HOOK (STOP THE SCROLL)
         {
-            "keyword": "Australian cricket highlights",
-            "identity_keyword": "Damien Martyn Australia cricketer",
-            "text": "Australian cricket legend Damien Martyn — one of the most graceful batsmen of his era!",
+            "keyword": "Liverpool vs Leeds United football highlights",
+            "identity_keyword": "Liverpool FC vs Leeds United FC",
+            "text": "Reds versus Whites — Liverpool takes on Leeds United in a thrilling Premier League clash!",
             "duration": 3,
             "visual_type": "emotion"
         },
 
-        # 2️⃣ WHO IS DAMIEN MARTYN
+        # 2️⃣ MATCH CONTEXT
         {
-            "keyword": "Damien Martyn batting highlights",
-            "identity_keyword": "Damien Martyn Australian cricketer",
-            "text": "Damien Martyn was a classy middle-order batsman known for silky strokes and scoring under pressure.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 3️⃣ EARLY CAREER BREAKTHROUGH
-        {
-            "keyword": "Damien Martyn early career cricket",
-            "identity_keyword": "Damien Martyn early years",
-            "text": "Martyn broke into the Australian side in the late 1990s, quickly earning praise from fans and critics.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 4️⃣ TEST MATCH MASTERCLASS
-        {
-            "keyword": "Damien Martyn Test cricket highlights",
-            "identity_keyword": "Damien Martyn Test innings",
-            "text": "In Test cricket, his timing and technique were outstanding — he could build big innings when it mattered.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 5️⃣ ODI SUCCESS
-        {
-            "keyword": "Damien Martyn ODI highlights",
-            "identity_keyword": "Damien Martyn ODI cricket",
-            "text": "In One Day Internationals, Martyn was a reliable finisher and a key figure in Australia’s batting lineup.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 6️⃣ MEMORABLE MOMENT: 88* vs NZ
-        {
-            "keyword": "Damien Martyn 88 not out NZ cricket",
-            "identity_keyword": "Damien Martyn iconic innings",
-            "text": "One of his most memorable knocks was an unbeaten 88 against New Zealand under pressure!",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 7️⃣ POST-CRICKET CONTRIBUTION
-        {
-            "keyword": "Damien Martyn commentary highlights",
-            "identity_keyword": "Damien Martyn cricket commentator",
-            "text": "After retirement, Martyn has been a respected commentator and mentor, sharing insights with future stars.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 8️⃣ CAREER LEGACY
-        {
-            "keyword": "Australian cricket legends montage",
-            "identity_keyword": "Australian cricket greats",
-            "text": "Martyn’s elegant style and clutch performances earned him a place among Australia’s cricket greats.",
+            "keyword": "Premier League match day stadium crowd",
+            "identity_keyword": "Premier League match",
+            "text": "This top-flight showdown brings fierce fans, high stakes, and classic rivalry energy to the pitch.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 9️⃣ FACTS YOU SHOULD KNOW
+        # 3️⃣ VENUE & TIMING
         {
-            "keyword": "cricket stats graphic",
-            "identity_keyword": "Damien Martyn records",
-            "text": "He scored over 7400 Test runs and more than 6000 ODI runs — a truly elite career.",
+            "keyword": "Anfield Liverpool crowd match",
+            "identity_keyword": "Anfield Stadium",
+            "text": "At Anfield, the home crowd roars as Liverpool seeks full points against Leeds today.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 4️⃣ LIVERPOOL RECENT FORM
+        {
+            "keyword": "Liverpool FC goals highlights",
+            "identity_keyword": "Liverpool FC",
+            "text": "Liverpool have been strong this season — goals from multiple attackers and high pressing intensity.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 5️⃣ LEEDS UNITED FIGHT
+        {
+            "keyword": "Leeds United highlights",
+            "identity_keyword": "Leeds United FC",
+            "text": "Leeds United bring aggressive counter-attacks and grit, determined to spoil the Reds’ rhythm.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 6️⃣ KEY PLAYERS — LIVERPOOL
+        {
+            "keyword": "Mohamed Salah Liverpool goals",
+            "identity_keyword": "Mohamed Salah",
+            "text": "Mo Salah remains deadly in front of goal, leading Liverpool’s attack with pace and precision.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 7️⃣ KEY PLAYERS — LEEDS
+        {
+            "keyword": "Leeds United star player",
+            "identity_keyword": "Leeds United players",
+            "text": "Leeds stars continue to push forward, mixing creative play and physical intensity this season.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 8️⃣ MATCH FACTS & STATS
+        {
+            "keyword": "Premier League stats graphic",
+            "identity_keyword": "Premier League 2025–26 season",
+            "text": "This fixture has seen memorable battles over the years — tight stats and attack-driven football.",
+            "duration": 4,
+            "visual_type": "emotion"
+        },
+
+        # 9️⃣ WHERE & WHEN LIVE
+        {
+            "keyword": "football live broadcast on TV",
+            "identity_keyword": "Premier League live",
+            "text": "Watch live action on official broadcast channels — check local listings for Liverpool vs Leeds kickoff time.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
         # 🔟 FAN ENGAGEMENT & CTA
         {
-            "keyword": "cricket fans celebration highlights",
-            "identity_keyword": "cricket fans reaction",
-            "text": "Who was your favorite Martyn innings? Drop your pick in the comments and follow for more cricket legends!",
+            "keyword": "football fans cheering stadium",
+            "identity_keyword": "Liverpool vs Leeds United fans",
+            "text": "Who’s your pick today — Reds’ firepower or Leeds’ relentless fight? Comment your prediction!",
             "duration": 4,
             "visual_type": "emotion"
         }
