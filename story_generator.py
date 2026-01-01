@@ -1,44 +1,49 @@
 import os
 import requests
+import urllib.parse
 from PIL import Image, ImageDraw, ImageFont
 from moviepy.editor import (
     ImageClip,
     VideoFileClip,
     AudioFileClip,
-    CompositeVideoClip,
     concatenate_videoclips
 )
 from TTS.api import TTS
 
 # ============================================================
-# ENV
+# ENVIRONMENT VARIABLES
 # ============================================================
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
-SHORTS_MODE = os.getenv("SHORTS_MODE", "false").lower() == "true"
 
 if not PIXABAY_API_KEY:
-    raise RuntimeError("PIXABAY_API_KEY missing")
+    raise RuntimeError("PIXABAY_API_KEY is not set")
+
+HEADERS = {
+    "User-Agent": "YouTubeShortsBot/1.0",
+    "Referer": "https://en.wikipedia.org/"
+}
 
 # ============================================================
-# CONSTANTS
+# XTTS SPEAKER VOICE
 # ============================================================
-SHORT_WIDTH = 720
-SHORT_HEIGHT = 1280
-MAX_SHORT_DURATION = 59
-MIN_SCENE_DURATION = 1.6
-MAX_SCENE_DURATION = 4.2
-
-KEYWORD_FALLBACKS = [
-    "cricket stadium crowd",
-    "domestic cricket match india",
-    "cricket celebration fans"
-]
-
-FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 SPEAKER_WAV = "assets/voice.wav"
 
+def ensure_speaker_wav():
+    os.makedirs("assets", exist_ok=True)
+    if not os.path.exists(SPEAKER_WAV):
+        url = (
+            "https://github.com/coqui-ai/TTS/raw/dev/tests/data/"
+            "ljspeech/wavs/LJ001-0001.wav"
+        )
+        r = requests.get(url, timeout=20)
+        r.raise_for_status()
+        with open(SPEAKER_WAV, "wb") as f:
+            f.write(r.content)
+
+ensure_speaker_wav()
+
 # ============================================================
-# TTS
+# INITIALIZE TTS
 # ============================================================
 tts_client = TTS(
     model_name="tts_models/multilingual/multi-dataset/xtts_v2",
@@ -46,164 +51,244 @@ tts_client = TTS(
 )
 
 # ============================================================
-# IMAGE HELPERS
+# CONSTANTS
 # ============================================================
-def fit_image(img_path, out_path):
-    with Image.open(img_path) as img:
+SHORT_WIDTH = 720
+SHORT_HEIGHT = 1280
+MAX_SHORT_DURATION = 59
+
+KEYWORD_FALLBACKS = [
+    "cricket stadium crowd",
+    "domestic cricket match India",
+    "cricket celebration"
+]
+
+# ============================================================
+# IMAGE UTILITIES
+# ============================================================
+def fit_image_to_viewport(src, dst):
+    with Image.open(src) as img:
         img = img.convert("RGB")
         sw, sh = img.size
         scale = max(SHORT_WIDTH / sw, SHORT_HEIGHT / sh)
+
         nw, nh = int(sw * scale), int(sh * scale)
         img = img.resize((nw, nh), Image.Resampling.LANCZOS)
+
         left = (nw - SHORT_WIDTH) // 2
         top = (nh - SHORT_HEIGHT) // 2
         img = img.crop((left, top, left + SHORT_WIDTH, top + SHORT_HEIGHT))
-        img.save(out_path, "JPEG", quality=95)
+        img.save(dst, "JPEG", quality=95)
 
 # ============================================================
-# PIXABAY VIDEO / IMAGE DOWNLOAD
+# PIXABAY VIDEO
 # ============================================================
 def download_pixabay_video(keyword, folder):
     try:
         r = requests.get(
             "https://pixabay.com/api/videos/",
-            params={"key": PIXABAY_API_KEY, "q": keyword, "per_page": 3, "safesearch": "true"},
+            params={
+                "key": PIXABAY_API_KEY,
+                "q": keyword,
+                "per_page": 3,
+                "safesearch": "true",
+            },
             timeout=10
         ).json()
+
         if not r.get("hits"):
             return None
+
         url = r["hits"][0]["videos"]["large"]["url"]
-        path = os.path.join(folder, "video.mp4")
+        path = os.path.join(folder, "pixabay.mp4")
+
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=15).content)
+
         print(f"[PIXABAY VIDEO] {keyword}")
         return path
+
     except Exception as e:
         print("[PIXABAY VIDEO ERROR]", e)
         return None
 
+# ============================================================
+# PIXABAY IMAGE
+# ============================================================
 def download_pixabay_image(keyword, folder):
     try:
         r = requests.get(
             "https://pixabay.com/api/",
-            params={"key": PIXABAY_API_KEY, "q": keyword, "image_type": "photo", "orientation": "vertical", "per_page": 3, "safesearch": "true"},
+            params={
+                "key": PIXABAY_API_KEY,
+                "q": keyword,
+                "image_type": "photo",
+                "orientation": "vertical",
+                "safesearch": "true",
+                "per_page": 3,
+            },
             timeout=10
         ).json()
+
         if not r.get("hits"):
             return None
+
         url = r["hits"][0]["largeImageURL"]
-        path = os.path.join(folder, "image.jpg")
+        path = os.path.join(folder, "pixabay.jpg")
+
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=10).content)
+
         print(f"[PIXABAY IMAGE] {keyword}")
         return path
+
     except Exception as e:
         print("[PIXABAY IMAGE ERROR]", e)
         return None
 
 # ============================================================
-# CAPTION (PIL-based)
+# ✅ WIKIPEDIA IMAGE (CORRECTED & SAFE)
 # ============================================================
-def create_caption_image(text, folder):
+def download_wikipedia_image(keyword, folder):
+    try:
+        title = urllib.parse.quote(keyword.replace(" ", "_"))
+        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{title}"
+
+        r = requests.get(url, headers=HEADERS, timeout=10)
+        r.raise_for_status()
+        data = r.json()
+
+        thumbnail = data.get("thumbnail", {}).get("source")
+        if not thumbnail:
+            return None
+
+        if thumbnail.lower().endswith(".svg"):
+            return None
+
+        path = os.path.join(folder, "wikipedia.jpg")
+
+        img = requests.get(thumbnail, headers=HEADERS, timeout=10)
+        img.raise_for_status()
+
+        with open(path, "wb") as f:
+            f.write(img.content)
+
+        with Image.open(path) as im:
+            im.verify()
+
+        print(f"[WIKIPEDIA IMAGE] {keyword}")
+        return path
+
+    except Exception as e:
+        print("[WIKIPEDIA ERROR]", e)
+        return None
+
+# ============================================================
+# VIDEO HELPERS (FIXED)
+# ============================================================
+def normalize_video(path, duration):
+    clip = VideoFileClip(path).subclip(0, min(duration, VideoFileClip(path).duration))
+    clip = clip.resize(height=SHORT_HEIGHT)
+    clip = clip.crop(
+        x_center=clip.w / 2,
+        y_center=clip.h / 2,
+        width=SHORT_WIDTH,
+        height=SHORT_HEIGHT
+    )
+    return clip
+
+def ken_burns(clip, zoom=1.1):
+    return clip.resize(lambda t: 1 + (zoom - 1) * (t / clip.duration))
+
+# ============================================================
+# TEXT FALLBACK
+# ============================================================
+def create_text_graphic(text, folder):
     img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (10, 10, 10))
     draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(FONT_PATH, 60)
-    # Wrap text
-    lines = []
-    words = text.split()
-    line = ""
-    for w in words:
-        test_line = line + " " + w if line else w
-        w_size = draw.textsize(test_line, font=font)
-        if w_size[0] > SHORT_WIDTH - 80:
-            lines.append(line)
-            line = w
-        else:
-            line = test_line
-    lines.append(line)
-    y = SHORT_HEIGHT - 400
-    for l in lines:
-        draw.text((40, y), l.upper(), fill="white", font=font)
-        y += 70
-    path = os.path.join(folder, "caption.jpg")
+    font = ImageFont.load_default()
+    wrapped = "\n".join(text[i:i + 30] for i in range(0, len(text), 30))
+    draw.text((40, 420), wrapped, fill="white", font=font, spacing=12)
+    path = os.path.join(folder, "fallback.jpg")
     img.save(path, "JPEG", quality=95)
     return path
 
 # ============================================================
-# DYNAMIC ZOOM (SHORTS STYLE)
-# ============================================================
-def dynamic_zoom(clip):
-    return clip.resize(lambda t: 1 + 0.12 * (t / clip.duration))
-
-# ============================================================
 # MAIN VIDEO CREATOR
 # ============================================================
-def create_video(storyboard, shorts_mode=False):
+def create_video(storyboard):
     segments = []
-    total_time = 0
+    total = 0
 
-    for i, scene in enumerate(storyboard):
+    for i, entry in enumerate(storyboard):
         folder = f"./temp_{i}"
         os.makedirs(folder, exist_ok=True)
 
-        # -------- AUDIO --------
-        audio_path = os.path.join(folder, "audio.wav")
+        audio_path = f"{folder}/audio.wav"
         tts_client.tts_to_file(
-            text=scene["text"],
+            text=entry["text"],
             file_path=audio_path,
+            language="en",
             speaker_wav=SPEAKER_WAV,
-            language="en"
         )
-        audio = AudioFileClip(audio_path)
 
-        duration = min(max(audio.duration, MIN_SCENE_DURATION), MAX_SCENE_DURATION)
-        if total_time + duration > MAX_SHORT_DURATION:
+        audio = AudioFileClip(audio_path)
+        duration = min(audio.duration, MAX_SHORT_DURATION - total)
+        if duration <= 0:
             break
+
         audio = audio.subclip(0, duration)
-        total_time += duration
+        total += duration
+
+        visual_type = entry.get("visual_type", "emotion")
+        keyword = entry.get("keyword")
+        identity_kw = entry.get("identity_keyword")
 
         clip = None
 
-        # -------- VIDEO --------
-        if scene.get("visual_type") == "emotion":
-            clip_path = download_pixabay_video(scene["keyword"], folder)
-            if clip_path:
-                base = VideoFileClip(clip_path).subclip(0, duration)
-                base = base.resize(height=SHORT_HEIGHT).crop(width=SHORT_WIDTH)
-                clip = dynamic_zoom(base)
+        # ---------- EMOTION → PIXABAY VIDEO ----------
+        if visual_type == "emotion":
+            for kw in [keyword] + KEYWORD_FALLBACKS:
+                if not kw:
+                    continue
+                video = download_pixabay_video(kw, folder)
+                if video:
+                    clip = ken_burns(normalize_video(video, duration))
+                    break
 
-        # -------- IMAGE --------
+        # ---------- IDENTITY → WIKIPEDIA ----------
+        if not clip and visual_type == "identity" and identity_kw:
+            img = download_wikipedia_image(identity_kw, folder)
+            if img:
+                safe = os.path.join(folder, "safe.jpg")
+                fit_image_to_viewport(img, safe)
+                clip = ken_burns(ImageClip(safe).set_duration(duration))
+
+        # ---------- FALLBACK → PIXABAY IMAGE ----------
+        if not clip and keyword:
+            img = download_pixabay_image(keyword, folder)
+            if img:
+                safe = os.path.join(folder, "safe.jpg")
+                fit_image_to_viewport(img, safe)
+                clip = ken_burns(ImageClip(safe).set_duration(duration))
+
+        # ---------- TEXT FALLBACK ----------
         if not clip:
-            img_path = download_pixabay_image(scene["keyword"], folder)
-            if img_path:
-                safe_path = os.path.join(folder, "safe.jpg")
-                fit_image(img_path, safe_path)
-                clip = dynamic_zoom(ImageClip(safe_path).set_duration(duration))
+            fallback = create_text_graphic(entry["text"], folder)
+            clip = ImageClip(fallback).set_duration(duration)
 
-        # -------- TEXT FALLBACK --------
-        if not clip:
-            safe_path = os.path.join(folder, "fallback.jpg")
-            img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (15, 15, 15))
-            img.save(safe_path)
-            clip = ImageClip(safe_path).set_duration(duration)
+        segments.append(clip.set_audio(audio))
 
-        # -------- CAPTION --------
-        caption_path = create_caption_image(scene["text"], folder)
-        caption_clip = ImageClip(caption_path).set_duration(duration).set_position(("center", SHORT_HEIGHT - 400))
-        clip = CompositeVideoClip([clip, caption_clip]).set_audio(audio)
-
-        segments.append(clip)
-        if total_time >= MAX_SHORT_DURATION:
+        if total >= MAX_SHORT_DURATION:
             break
 
-    final_clip = concatenate_videoclips(segments, method="compose")
-    final_clip.write_videofile(
+    final = concatenate_videoclips(segments, method="compose")
+    final.write_videofile(
         "final_video.mp4",
         fps=30,
         codec="libx264",
         audio_codec="aac",
         threads=2,
-        preset="ultrafast"
     )
 
     return "final_video.mp4"
