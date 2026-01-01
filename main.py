@@ -32,7 +32,7 @@ def build_description(scene):
     )
 
     description += (
-        "\n\n📸 Images: Pixabay (Royalty Free)"
+        "\n\n📸 Images: Wikipedia (Wikimedia Commons)"
         "\n🎬 Videos: Pixabay (Royalty Free)"
         "\n🗣️ Voice: AI Generated\n\n"
         f"{DEFAULT_HASHTAGS}"
@@ -57,10 +57,7 @@ def run_automation():
     print("SHORTS MODE: ENABLED")
 
     print("STEP 2: Generating video...")
-    video_file = story_generator.create_video(
-        storyboard,
-        shorts_mode=True  # ✅ ONLY this argument
-    )
+    video_file = story_generator.create_video(storyboard)
 
     if not os.path.exists(video_file):
         raise RuntimeError("Video generation failed")
