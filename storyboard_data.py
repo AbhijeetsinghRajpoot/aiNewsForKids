@@ -1,101 +1,101 @@
 def get_storyboard():
     return [
 
-        # 1️⃣ SUPER HOOK (STOP THE SCROLL)
+        # 1️⃣ SUPER HOOK — EMOTION (Pixabay)
         {
-            "keyword": "college football bowl game highlights",
-            "identity_keyword": "Music City Bowl",
-            "text": "This bowl game had SEC speed, Big Ten toughness, and serious bragging rights on the line!",
+            "keyword": "college football bowl game hype crowd",
+            "identity_keyword": "Miami vs Ohio State",
+            "text": "Miami versus Ohio State… tradition, pressure, and playoff dreams collide in one massive game.",
             "duration": 3,
             "visual_type": "emotion"
         },
 
-        # 2️⃣ MATCHUP REVEAL
+        # 2️⃣ MATCHUP REVEAL — EMOTION (Pixabay)
         {
-            "keyword": "Tennessee vs Illinois football highlights",
-            "identity_keyword": "Tennessee Volunteers vs Illinois Fighting Illini",
-            "text": "It’s Tennessee Volunteers versus Illinois Fighting Illini in the Liberty Mutual Music City Bowl!",
+            "keyword": "Ohio State vs Miami football highlights",
+            "identity_keyword": "Ohio State Buckeyes vs Miami Hurricanes",
+            "text": "It’s the Ohio State Buckeyes taking on the Miami Hurricanes in a must-watch college football showdown.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 3️⃣ STAGE SETTING
+        # 3️⃣ STADIUM ATMOSPHERE — EMOTION (Pixabay)
         {
-            "keyword": "Nissan Stadium Nashville football",
-            "identity_keyword": "Nissan Stadium Nashville",
-            "text": "The stage is Nissan Stadium in Nashville — a packed house for one of bowl season’s most intriguing clashes.",
+            "keyword": "AT&T Stadium Arlington Texas college football crowd",
+            "identity_keyword": "AT&T Stadium Cotton Bowl",
+            "text": "The stage is AT&T Stadium in Texas — built for big moments and unforgettable clashes.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 4️⃣ TENNESSEE IDENTITY (FAST & FLASHY)
+        # 4️⃣ OHIO STATE TEAM IDENTITY — IDENTITY (Wikipedia)
         {
-            "keyword": "Tennessee Volunteers football offense highlights",
-            "identity_keyword": "Tennessee Volunteers football",
-            "text": "Tennessee brought SEC speed, high tempo offense, and playmakers ready to strike from anywhere.",
+            "keyword": "Ohio State Buckeyes football highlights",
+            "identity_keyword": "Ohio State Buckeyes football",
+            "text": "Ohio State brings explosive offense, elite athletes, and championship-level expectations.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 5️⃣ ILLINOIS IDENTITY (TOUGH & DISCIPLINED)
+        # 5️⃣ OHIO STATE QB SPOTLIGHT — IDENTITY (Wikipedia)
         {
-            "keyword": "Illinois Fighting Illini football defense highlights",
-            "identity_keyword": "Illinois Fighting Illini football",
-            "text": "Illinois countered with physical football, disciplined defense, and a grind-it-out mentality.",
+            "keyword": "Ohio State quarterback game highlights",
+            "identity_keyword": "Ohio State quarterback",
+            "text": "The Buckeyes quarterback leads with confidence, accuracy, and big-game composure.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 6️⃣ STAR WATCH — LUKE ALTMYER
+        # 6️⃣ MIAMI TEAM IDENTITY — IDENTITY (Wikipedia)
         {
-            "keyword": "Illinois quarterback game highlights",
-            "identity_keyword": "Luke Altmyer",
-            "text": "Illinois quarterback Luke Altmyer stood out with smart decisions, mobility, and leadership under pressure.",
+            "keyword": "Miami Hurricanes football highlights",
+            "identity_keyword": "Miami Hurricanes football",
+            "text": "Miami answers with speed, swagger, and the fearless mentality that built The U’s legacy.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 7️⃣ COACHING CHESS MATCH
+        # 7️⃣ DEFENSIVE STAR — IDENTITY (Wikipedia)
         {
-            "keyword": "college football coaching sideline highlights",
-            "identity_keyword": "Bret Bielema",
-            "text": "From the sideline, Illinois coach Bret Bielema leaned on experience, discipline, and bowl-game preparation.",
+            "keyword": "Miami Hurricanes defensive pressure highlights",
+            "identity_keyword": "Rueben Bain Jr",
+            "text": "Defensive star Rueben Bain Jr brings relentless pressure and game-changing energy.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 8️⃣ STYLE CLASH — EMOTION (Pixabay)
+        {
+            "keyword": "college football offense versus defense highlights",
+            "identity_keyword": "Big Ten vs ACC football",
+            "text": "This is power versus speed — Big Ten toughness against ACC explosiveness.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 8️⃣ STYLE CLASH MOMENT
+        # 9️⃣ PLAYOFF TENSION — EMOTION (Pixabay)
         {
-            "keyword": "SEC vs Big Ten football highlights",
-            "identity_keyword": "SEC vs Big Ten",
-            "text": "This was speed versus strength — SEC tempo clashing with Big Ten physicality on every snap.",
+            "keyword": "college football playoff tension crowd reaction",
+            "identity_keyword": "College Football Playoff",
+            "text": "With playoff implications on the line, every drive feels season-defining.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 9️⃣ GAME FLOW DRAMA
+        # 🔟 CROWD & MOMENTUM — EMOTION (Pixabay)
         {
-            "keyword": "college football close game fourth quarter",
-            "identity_keyword": "Music City Bowl highlights",
-            "text": "Momentum swung back and forth, with every drive feeling like it could decide the bowl game.",
+            "keyword": "college football crowd reaction stadium night",
+            "identity_keyword": "Cotton Bowl crowd",
+            "text": "The crowd is electric, momentum is shifting, and pressure is at its peak.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 🔟 WHAT IT MEANS
+        # 1️⃣1️⃣ CTA — EMOTION (Pixabay)
         {
-            "keyword": "college football bowl game reaction",
-            "identity_keyword": "Music City Bowl reaction",
-            "text": "For Tennessee, it was about SEC pride. For Illinois, it was proving Big Ten toughness on a big stage.",
-            "duration": 4,
-            "visual_type": "emotion"
-        },
-
-        # 1️⃣1️⃣ CTA — BOOST COMMENTS
-        {
-            "keyword": "college football fans debate",
-            "identity_keyword": "college football fans",
-            "text": "Who won the style battle — Tennessee’s speed or Illinois’ discipline? Comment your pick!",
+            "keyword": "college football fans debating teams",
+            "identity_keyword": "Ohio State vs Miami prediction",
+            "text": "Who wins this clash — Buckeye power or Hurricane speed? Drop your prediction below!",
             "duration": 4,
             "visual_type": "emotion"
         }
