@@ -3,99 +3,90 @@ def get_storyboard():
 
         # 1️⃣ SUPER HOOK (STOP THE SCROLL)
         {
-            "keyword": "BBL cricket match highlights",
-            "identity_keyword": "Renegades vs Sydney Sixers",
-            "text": "Big Bash League action is heating up — Renegades versus Sydney Sixers promises pure fireworks!",
+            "keyword": "Australian cricket highlights",
+            "identity_keyword": "Damien Martyn Australia cricketer",
+            "text": "Australian cricket legend Damien Martyn — one of the most graceful batsmen of his era!",
             "duration": 3,
             "visual_type": "emotion"
         },
 
-        # 2️⃣ MATCHUP REVEAL
+        # 2️⃣ WHO IS DAMIEN MARTYN
         {
-            "keyword": "Melbourne Renegades vs Sydney Sixers highlights",
-            "identity_keyword": "Melbourne Renegades vs Sydney Sixers",
-            "text": "It’s Melbourne Renegades taking on the Sydney Sixers in a high-stakes BBL clash.",
+            "keyword": "Damien Martyn batting highlights",
+            "identity_keyword": "Damien Martyn Australian cricketer",
+            "text": "Damien Martyn was a classy middle-order batsman known for silky strokes and scoring under pressure.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 3️⃣ EARLY CAREER BREAKTHROUGH
+        {
+            "keyword": "Damien Martyn early career cricket",
+            "identity_keyword": "Damien Martyn early years",
+            "text": "Martyn broke into the Australian side in the late 1990s, quickly earning praise from fans and critics.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 4️⃣ TEST MATCH MASTERCLASS
+        {
+            "keyword": "Damien Martyn Test cricket highlights",
+            "identity_keyword": "Damien Martyn Test innings",
+            "text": "In Test cricket, his timing and technique were outstanding — he could build big innings when it mattered.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 5️⃣ ODI SUCCESS
+        {
+            "keyword": "Damien Martyn ODI highlights",
+            "identity_keyword": "Damien Martyn ODI cricket",
+            "text": "In One Day Internationals, Martyn was a reliable finisher and a key figure in Australia’s batting lineup.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 6️⃣ MEMORABLE MOMENT: 88* vs NZ
+        {
+            "keyword": "Damien Martyn 88 not out NZ cricket",
+            "identity_keyword": "Damien Martyn iconic innings",
+            "text": "One of his most memorable knocks was an unbeaten 88 against New Zealand under pressure!",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 7️⃣ POST-CRICKET CONTRIBUTION
+        {
+            "keyword": "Damien Martyn commentary highlights",
+            "identity_keyword": "Damien Martyn cricket commentator",
+            "text": "After retirement, Martyn has been a respected commentator and mentor, sharing insights with future stars.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 8️⃣ CAREER LEGACY
+        {
+            "keyword": "Australian cricket legends montage",
+            "identity_keyword": "Australian cricket greats",
+            "text": "Martyn’s elegant style and clutch performances earned him a place among Australia’s cricket greats.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 3️⃣ TOURNAMENT CONTEXT
+        # 9️⃣ FACTS YOU SHOULD KNOW
         {
-            "keyword": "Big Bash League stadium night match",
-            "identity_keyword": "Big Bash League 2026",
-            "text": "BBL 2026 continues to deliver thrilling games, packed stadiums, and non-stop entertainment.",
+            "keyword": "cricket stats graphic",
+            "identity_keyword": "Damien Martyn records",
+            "text": "He scored over 7400 Test runs and more than 6000 ODI runs — a truly elite career.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 4️⃣ SIXERS IDENTITY (EXPERIENCE & CONTROL)
+        # 🔟 FAN ENGAGEMENT & CTA
         {
-            "keyword": "Sydney Sixers cricket team highlights",
-            "identity_keyword": "Sydney Sixers",
-            "text": "The Sydney Sixers bring experience, discipline, and a winning mindset into this contest.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 5️⃣ STAR SPOTLIGHT — BABAR AZAM
-        {
-            "keyword": "Babar Azam batting highlights",
-            "identity_keyword": "Babar Azam",
-            "text": "Global superstar Babar Azam continues to impress with elegant stroke play and calm leadership.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 6️⃣ BOWLING THREAT — SEAN ABBOTT
-        {
-            "keyword": "Sean Abbott bowling highlights",
-            "identity_keyword": "Sean Abbott",
-            "text": "Sean Abbott brings pace, accuracy, and big-moment wickets when the Sixers need it most.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 7️⃣ RENEGADES IDENTITY (POWER & AGGRESSION)
-        {
-            "keyword": "Melbourne Renegades batting highlights",
-            "identity_keyword": "Melbourne Renegades",
-            "text": "Melbourne Renegades answer back with aggressive batting and fearless intent.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 8️⃣ BIG HITTER WATCH — JOSH BROWN
-        {
-            "keyword": "Josh Brown six hitting highlights",
-            "identity_keyword": "Josh Brown",
-            "text": "Josh Brown is the danger man — capable of changing the game with a few massive hits.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 9️⃣ GAME FLOW & SCORE PRESSURE
-        {
-            "keyword": "BBL close match final overs",
-            "identity_keyword": "BBL live score",
-            "text": "With the scorecard tightening, every over feels like it could decide the match.",
-            "duration": 4,
-            "visual_type": "emotion"
-        },
-
-        # 🔟 WHY THIS MATCH MATTERS
-        {
-            "keyword": "BBL points table graphic",
-            "identity_keyword": "BBL playoffs race",
-            "text": "This result could reshape the BBL 2026 standings and the race for the playoffs.",
-            "duration": 4,
-            "visual_type": "emotion"
-        },
-
-        # 1️⃣1️⃣ FAN ENGAGEMENT CTA
-        {
-            "keyword": "cricket fans celebration reaction",
-            "identity_keyword": "Renegades vs Sixers fans",
-            "text": "Who’s winning this one — Sixers’ experience or Renegades’ power? Comment your prediction!",
+            "keyword": "cricket fans celebration highlights",
+            "identity_keyword": "cricket fans reaction",
+            "text": "Who was your favorite Martyn innings? Drop your pick in the comments and follow for more cricket legends!",
             "duration": 4,
             "visual_type": "emotion"
         }
