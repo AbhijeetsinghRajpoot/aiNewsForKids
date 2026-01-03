@@ -3,90 +3,90 @@ def get_storyboard():
 
         # 1️⃣ SUPER HOOK (STOP THE SCROLL)
         {
-            "keyword": "Liverpool vs Leeds United football highlights",
-            "identity_keyword": "Liverpool FC vs Leeds United FC",
-            "text": "Reds versus Whites — Liverpool takes on Leeds United in a thrilling Premier League clash!",
+            "keyword": "al-ahli saudi vs al-nassr highlights",
+            "identity_keyword": "Al-Ahli Saudi vs Al-Nassr",
+            "text": "Saudi Pro League explodes! Al-Ahli Saudi take on Al-Nassr in a high-voltage clash packed with drama!",
             "duration": 3,
             "visual_type": "emotion"
         },
 
         # 2️⃣ MATCH CONTEXT
         {
-            "keyword": "Premier League match day stadium crowd",
-            "identity_keyword": "Premier League match",
-            "text": "This top-flight showdown brings fierce fans, high stakes, and classic rivalry energy to the pitch.",
+            "keyword": "saudi pro league big match crowd",
+            "identity_keyword": "Saudi Pro League",
+            "text": "This blockbuster fixture shakes the league — title pressure, star power, and roaring fans!",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 3️⃣ VENUE & TIMING
+        # 3️⃣ FIXTURE & IMPORTANCE
         {
-            "keyword": "Anfield Liverpool crowd match",
-            "identity_keyword": "Anfield Stadium",
-            "text": "At Anfield, the home crowd roars as Liverpool seeks full points against Leeds today.",
+            "keyword": "al ahli saudi vs al nassr match night",
+            "identity_keyword": "Al-Ahli vs Al-Nassr fixture",
+            "text": "Al-Ahli Saudi vs Al-Nassr — a must-watch battle impacting the Saudi Pro League standings.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 4️⃣ LIVERPOOL RECENT FORM
+        # 4️⃣ AL-NASSR SEASON CONTEXT
         {
-            "keyword": "Liverpool FC goals highlights",
-            "identity_keyword": "Liverpool FC",
-            "text": "Liverpool have been strong this season — goals from multiple attackers and high pressing intensity.",
+            "keyword": "al-nassr fc league leaders",
+            "identity_keyword": "Al-Nassr FC",
+            "text": "Al-Nassr entered as league leaders, riding momentum and an unbeaten run fueled by elite experience.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 5️⃣ LEEDS UNITED FIGHT
+        # 5️⃣ AL-AHLI INTENT
         {
-            "keyword": "Leeds United highlights",
-            "identity_keyword": "Leeds United FC",
-            "text": "Leeds United bring aggressive counter-attacks and grit, determined to spoil the Reds’ rhythm.",
+            "keyword": "al-ahli saudi attacking football",
+            "identity_keyword": "Al-Ahli Saudi FC",
+            "text": "Al-Ahli Saudi came fearless — pressing high and hunting goals against the giants.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 6️⃣ KEY PLAYERS — LIVERPOOL
+        # 6️⃣ STAR MOMENT — IVAN TONEY
         {
-            "keyword": "Mohamed Salah Liverpool goals",
-            "identity_keyword": "Mohamed Salah",
-            "text": "Mo Salah remains deadly in front of goal, leading Liverpool’s attack with pace and precision.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 7️⃣ KEY PLAYERS — LEEDS
-        {
-            "keyword": "Leeds United star player",
-            "identity_keyword": "Leeds United players",
-            "text": "Leeds stars continue to push forward, mixing creative play and physical intensity this season.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 8️⃣ MATCH FACTS & STATS
-        {
-            "keyword": "Premier League stats graphic",
-            "identity_keyword": "Premier League 2025–26 season",
-            "text": "This fixture has seen memorable battles over the years — tight stats and attack-driven football.",
+            "keyword": "ivan toney goals al-ahli",
+            "identity_keyword": "Ivan Toney",
+            "text": "Ivan Toney stunned everyone! A deadly brace that turned the match on its head.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 9️⃣ WHERE & WHEN LIVE
+        # 7️⃣ KEY FIGURE — CRISTIANO RONALDO
         {
-            "keyword": "football live broadcast on TV",
-            "identity_keyword": "Premier League live",
-            "text": "Watch live action on official broadcast channels — check local listings for Liverpool vs Leeds kickoff time.",
+            "keyword": "cristiano ronaldo al-nassr match",
+            "identity_keyword": "Cristiano Ronaldo",
+            "text": "Cristiano Ronaldo pushed hard for Al-Nassr, leading the attack with intensity and belief.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 8️⃣ DECISIVE MOMENT
+        {
+            "keyword": "merih demiral goal al-ahli",
+            "identity_keyword": "Merih Demiral",
+            "text": "Late drama! Merih Demiral delivers the decisive blow to seal a famous Al-Ahli victory.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 🔟 FAN ENGAGEMENT & CTA
+        # 9️⃣ STANDINGS IMPACT
         {
-            "keyword": "football fans cheering stadium",
-            "identity_keyword": "Liverpool vs Leeds United fans",
-            "text": "Who’s your pick today — Reds’ firepower or Leeds’ relentless fight? Comment your prediction!",
+            "keyword": "al-ahli saudi vs al-nassr standings",
+            "identity_keyword": "Saudi Pro League standings",
+            "text": "The result shakes the table — Al-Nassr stay top, Al-Ahli strengthen their top-four push.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 🔟 WHERE TO WATCH & CTA
+        {
+            "keyword": "where to watch al-ahli saudi vs al-nassr",
+            "identity_keyword": "Al-Ahli vs Al-Nassr live",
+            "text": "Missed it live? Watch on official Saudi Pro League broadcasters — who impressed you most?",
             "duration": 4,
             "visual_type": "emotion"
         }
