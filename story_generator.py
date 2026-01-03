@@ -27,7 +27,6 @@ SHORT_WIDTH = 720
 SHORT_HEIGHT = 1280
 MAX_SHORT_DURATION = 59
 
-# SAFE FALLBACK KEYWORDS (NEWS FRIENDLY)
 KEYWORD_FALLBACKS = [
     "world news background",
     "global politics",
@@ -38,12 +37,15 @@ KEYWORD_FALLBACKS = [
 SPEAKER_WAV = "assets/voice.wav"
 
 # ============================================================
-# UTILITIES
+# TEXT CLEANING (CRITICAL FOR XTTS)
 # ============================================================
 def clean_text(text):
     text = unicodedata.normalize("NFKD", text)
     return text.encode("ascii", "ignore").decode()
 
+# ============================================================
+# SPEAKER VOICE
+# ============================================================
 def ensure_speaker_wav():
     os.makedirs("assets", exist_ok=True)
     if not os.path.exists(SPEAKER_WAV):
@@ -70,15 +72,22 @@ tts_client = TTS(
 # IMAGE / VIDEO HELPERS
 # ============================================================
 def fit_image_to_viewport(src, dst):
-    with Image.open(src) as img:
-        img = img.convert("RGB")
-        sw, sh = img.size
-        scale = max(SHORT_WIDTH / sw, SHORT_HEIGHT / sh)
-        nw, nh = int(sw * scale), int(sh * scale)
-        img = img.resize((nw, nh), Image.Resampling.LANCZOS)
-        left = (nw - SHORT_WIDTH) // 2
-        top = (nh - SHORT_HEIGHT) // 2
-        img.crop((left, top, left + SHORT_WIDTH, top + SHORT_HEIGHT)).save(dst, "JPEG", quality=95)
+    try:
+        with Image.open(src) as img:
+            img = img.convert("RGB")
+            sw, sh = img.size
+            scale = max(SHORT_WIDTH / sw, SHORT_HEIGHT / sh)
+            nw, nh = int(sw * scale), int(sh * scale)
+            img = img.resize((nw, nh), Image.Resampling.LANCZOS)
+            left = (nw - SHORT_WIDTH) // 2
+            top = (nh - SHORT_HEIGHT) // 2
+            img.crop((left, top, left + SHORT_WIDTH, top + SHORT_HEIGHT)).save(
+                dst, "JPEG", quality=95
+            )
+        return True
+    except Exception as e:
+        print("[IMAGE FIT FAILED]", e)
+        return False
 
 def ken_burns(clip, zoom=1.08):
     return clip.resize(lambda t: 1 + (zoom - 1) * (t / clip.duration))
@@ -132,27 +141,47 @@ def download_pixabay_image(keyword, folder):
         path = os.path.join(folder, "pixabay.jpg")
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=10).content)
+
+        with Image.open(path) as im:
+            im.verify()
+
         return path
     except:
         return None
 
 # ============================================================
-# WIKIPEDIA
+# WIKIPEDIA (HARDENED)
 # ============================================================
 def download_wikipedia_image(keyword, folder):
     try:
+        if not keyword:
+            return None
+
         title = urllib.parse.quote(keyword.replace(" ", "_"))
         url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{title}"
-        r = requests.get(url, headers=HEADERS, timeout=10).json()
-        thumb = r.get("thumbnail", {}).get("source")
-        if not thumb or thumb.endswith(".svg"):
+
+        r = requests.get(url, headers=HEADERS, timeout=10)
+        r.raise_for_status()
+        data = r.json()
+
+        thumb = data.get("thumbnail", {}).get("source")
+        if not thumb or thumb.lower().endswith(".svg"):
             return None
 
         path = os.path.join(folder, "wiki.jpg")
+        img_resp = requests.get(thumb, headers=HEADERS, timeout=10)
+        img_resp.raise_for_status()
+
         with open(path, "wb") as f:
-            f.write(requests.get(thumb, timeout=10).content)
+            f.write(img_resp.content)
+
+        # CRITICAL VALIDATION
+        with Image.open(path) as im:
+            im.verify()
+
         return path
-    except:
+    except Exception as e:
+        print("[WIKIPEDIA IMAGE SKIPPED]", keyword, e)
         return None
 
 # ============================================================
@@ -169,7 +198,7 @@ def create_text_graphic(text, folder):
     return path
 
 # ============================================================
-# MAIN GENERATOR
+# MAIN VIDEO GENERATOR
 # ============================================================
 def create_video(storyboard):
     segments = []
@@ -179,9 +208,12 @@ def create_video(storyboard):
         folder = f"./temp_{i}"
         os.makedirs(folder, exist_ok=True)
 
+        print(f"[SCENE {i}] START")
+
         # ---- TTS ----
         audio_path = f"{folder}/audio.wav"
         tts_text = clean_text(entry["text"])
+
         tts_client.tts_to_file(
             text=tts_text,
             file_path=audio_path,
@@ -194,6 +226,7 @@ def create_video(storyboard):
         duration = min(max(audio.duration, entry.get("duration", audio.duration)), remaining)
 
         if duration <= 0:
+            print("[SCENE SKIPPED: NO TIME LEFT]")
             continue
 
         audio = audio.subclip(0, duration)
@@ -216,16 +249,16 @@ def create_video(storyboard):
             img = download_wikipedia_image(entry.get("identity_keyword"), folder)
             if img:
                 safe = f"{folder}/safe.jpg"
-                fit_image_to_viewport(img, safe)
-                clip = ken_burns(ImageClip(safe).set_duration(duration))
+                if fit_image_to_viewport(img, safe):
+                    clip = ken_burns(ImageClip(safe).set_duration(duration))
 
         # ---- IMAGE FALLBACK ----
         if not clip:
             img = download_pixabay_image(entry.get("keyword"), folder)
             if img:
                 safe = f"{folder}/safe.jpg"
-                fit_image_to_viewport(img, safe)
-                clip = ken_burns(ImageClip(safe).set_duration(duration))
+                if fit_image_to_viewport(img, safe):
+                    clip = ken_burns(ImageClip(safe).set_duration(duration))
 
         # ---- TEXT FALLBACK ----
         if not clip:
@@ -233,6 +266,7 @@ def create_video(storyboard):
             clip = ImageClip(fallback).set_duration(duration)
 
         segments.append(clip.set_audio(audio))
+        print(f"[SCENE {i}] DONE ({duration:.2f}s)")
 
         if total >= MAX_SHORT_DURATION:
             break
