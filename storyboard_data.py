@@ -3,90 +3,126 @@ def get_storyboard():
 
         # 1️⃣ SUPER HOOK (STOP THE SCROLL)
         {
-            "keyword": "al-ahli saudi vs al-nassr highlights",
-            "identity_keyword": "Al-Ahli Saudi vs Al-Nassr",
-            "text": "Saudi Pro League explodes! Al-Ahli Saudi take on Al-Nassr in a high-voltage clash packed with drama!",
+            "keyword": "venezuela news",
+            "identity_keyword": "Venezuela country",
+            "text": "Venezuela remains in global focus as political developments and international relations continue to evolve.",
             "duration": 3,
             "visual_type": "emotion"
         },
 
-        # 2️⃣ MATCH CONTEXT
+        # 2️⃣ COUNTRY CONTEXT
         {
-            "keyword": "saudi pro league big match crowd",
-            "identity_keyword": "Saudi Pro League",
-            "text": "This blockbuster fixture shakes the league — title pressure, star power, and roaring fans!",
+            "keyword": "where is venezuela venezuela on map",
+            "identity_keyword": "Venezuela location",
+            "text": "Venezuela is a country in northern South America, bordered by the Caribbean Sea and several neighboring nations.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 3️⃣ CAPITAL & GOVERNANCE
+        {
+            "keyword": "caracas venezuela",
+            "identity_keyword": "Caracas capital city",
+            "text": "Caracas serves as the capital of Venezuela and the center of its political administration.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 4️⃣ PRESIDENT OF VENEZUELA
+        {
+            "keyword": "nicolas maduro venezuela president",
+            "identity_keyword": "Nicolás Maduro",
+            "text": "Nicolás Maduro has been the president of Venezuela since 2013.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 5️⃣ POLITICAL SITUATION
+        {
+            "keyword": "maduro venezuela government",
+            "identity_keyword": "Government of Venezuela",
+            "text": "Venezuela’s political landscape has faced internal challenges and international scrutiny.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 3️⃣ FIXTURE & IMPORTANCE
+        # 6️⃣ US–VENEZUELA RELATIONS
         {
-            "keyword": "al ahli saudi vs al nassr match night",
-            "identity_keyword": "Al-Ahli vs Al-Nassr fixture",
-            "text": "Al-Ahli Saudi vs Al-Nassr — a must-watch battle impacting the Saudi Pro League standings.",
+            "keyword": "us venezuela relations",
+            "identity_keyword": "United States Venezuela relations",
+            "text": "Relations between the United States and Venezuela have been strained for several years.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 4️⃣ AL-NASSR SEASON CONTEXT
+        # 7️⃣ US POLICIES AND SANCTIONS
         {
-            "keyword": "al-nassr fc league leaders",
-            "identity_keyword": "Al-Nassr FC",
-            "text": "Al-Nassr entered as league leaders, riding momentum and an unbeaten run fueled by elite experience.",
+            "keyword": "usa venezuela sanctions",
+            "identity_keyword": "US sanctions on Venezuela",
+            "text": "The United States has imposed sanctions on Venezuela related to governance and economic concerns.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 5️⃣ AL-AHLI INTENT
+        # 8️⃣ MILITARY CLAIMS CONTEXT
         {
-            "keyword": "al-ahli saudi attacking football",
-            "identity_keyword": "Al-Ahli Saudi FC",
-            "text": "Al-Ahli Saudi came fearless — pressing high and hunting goals against the giants.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 6️⃣ STAR MOMENT — IVAN TONEY
-        {
-            "keyword": "ivan toney goals al-ahli",
-            "identity_keyword": "Ivan Toney",
-            "text": "Ivan Toney stunned everyone! A deadly brace that turned the match on its head.",
+            "keyword": "us venezuela news",
+            "identity_keyword": "US Venezuela military claims",
+            "text": "Media reports discuss diplomatic tensions, while no confirmed military conflict has been reported.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 7️⃣ KEY FIGURE — CRISTIANO RONALDO
+        # 9️⃣ DONALD TRUMP ERA POLICY
         {
-            "keyword": "cristiano ronaldo al-nassr match",
-            "identity_keyword": "Cristiano Ronaldo",
-            "text": "Cristiano Ronaldo pushed hard for Al-Nassr, leading the attack with intensity and belief.",
+            "keyword": "donald trump venezuela",
+            "identity_keyword": "Donald Trump Venezuela policy",
+            "text": "During Donald Trump’s presidency, US policy toward Venezuela emphasized sanctions and pressure.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 8️⃣ DECISIVE MOMENT
+        # 🔟 OIL RESERVES & GLOBAL IMPACT
         {
-            "keyword": "merih demiral goal al-ahli",
-            "identity_keyword": "Merih Demiral",
-            "text": "Late drama! Merih Demiral delivers the decisive blow to seal a famous Al-Ahli victory.",
+            "keyword": "venezuela oil reserves crude oil price",
+            "identity_keyword": "Venezuela oil reserves",
+            "text": "Venezuela holds some of the world’s largest proven oil reserves, influencing global energy markets.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 1️⃣1️⃣ MEDIA COVERAGE
+        {
+            "keyword": "cnn venezuela us news",
+            "identity_keyword": "Venezuela media coverage",
+            "text": "International media continue to report on Venezuela’s political and economic situation.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 9️⃣ STANDINGS IMPACT
+        # 1️⃣2️⃣ RUMORS VS VERIFIED INFORMATION
         {
-            "keyword": "al-ahli saudi vs al-nassr standings",
-            "identity_keyword": "Saudi Pro League standings",
-            "text": "The result shakes the table — Al-Nassr stay top, Al-Ahli strengthen their top-four push.",
+            "keyword": "maduro captured rumors",
+            "identity_keyword": "Venezuela misinformation",
+            "text": "Claims circulating online are assessed by reliable sources to distinguish facts from misinformation.",
+            "duration": 4,
+            "visual_type": "emotion"
+        },
+
+        # 1️⃣3️⃣ CURRENT STATUS SUMMARY
+        {
+            "keyword": "us venezuela news latest",
+            "identity_keyword": "Venezuela current situation",
+            "text": "Venezuela remains engaged in international diplomacy without confirmed armed conflict.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 🔟 WHERE TO WATCH & CTA
+        # 1️⃣4️⃣ CONCLUSION
         {
-            "keyword": "where to watch al-ahli saudi vs al-nassr",
-            "identity_keyword": "Al-Ahli vs Al-Nassr live",
-            "text": "Missed it live? Watch on official Saudi Pro League broadcasters — who impressed you most?",
+            "keyword": "venezuela country overview",
+            "identity_keyword": "Venezuela overview",
+            "text": "Venezuela continues to play a significant role in regional politics and global energy discussions.",
             "duration": 4,
             "visual_type": "emotion"
         }
