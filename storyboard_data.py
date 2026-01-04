@@ -3,126 +3,126 @@ def get_storyboard():
 
         # 1️⃣ SUPER HOOK (STOP THE SCROLL)
         {
-            "keyword": "leeds vs man united",
-            "identity_keyword": "Leeds United vs Manchester United rivalry",
-            "text": "One of English football’s fiercest rivalries is back as Leeds United face Manchester United.",
+            "keyword": "mountain lion attack colorado",
+            "identity_keyword": "Colorado mountain lion incident",
+            "text": "A shocking wildlife incident has drawn attention after a man fought off a mountain lion weeks before a suspected fatal attack in Colorado.",
             "duration": 3,
             "visual_type": "emotion"
         },
 
-        # 2️⃣ MATCH CONTEXT
+        # 2️⃣ INCIDENT LOCATION CONTEXT
         {
-            "keyword": "leeds united vs manchester united",
-            "identity_keyword": "Leeds United Manchester United match",
-            "text": "Leeds United host Manchester United in a high-intensity Premier League clash at Elland Road.",
+            "keyword": "colorado wilderness mountain lion",
+            "identity_keyword": "Colorado wilderness",
+            "text": "The incident occurred in Colorado, a state known for its vast wilderness and native mountain lion population.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 3️⃣ LEEDS UNITED OVERVIEW
+        # 3️⃣ FIRST ENCOUNTER DETAILS
         {
-            "keyword": "leeds united football club",
-            "identity_keyword": "Leeds United FC",
-            "text": "Leeds United are known for their aggressive pressing style and passionate home support.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 4️⃣ MANCHESTER UNITED OVERVIEW
-        {
-            "keyword": "manchester united football club",
-            "identity_keyword": "Manchester United FC",
-            "text": "Manchester United remain one of the most successful and globally followed clubs in football history.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 5️⃣ RECENT FORM INSIGHT
-        {
-            "keyword": "man united recent form leeds recent form",
-            "identity_keyword": "Premier League recent form",
-            "text": "Both teams come into this match looking to build momentum and strengthen their league position.",
+            "keyword": "man fought off mountain lion",
+            "identity_keyword": "Mountain lion encounter survivor",
+            "text": "Weeks earlier, a man reportedly survived a close encounter by fighting off a mountain lion during a hike.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 6️⃣ KEY LEEDS PLAYERS
+        # 4️⃣ SURVIVAL AND RESPONSE
         {
-            "keyword": "leeds united key players",
-            "identity_keyword": "Leeds United squad",
-            "text": "Leeds United rely on pace, physicality, and quick transitions to trouble top opponents.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 7️⃣ KEY MAN UNITED PLAYERS
-        {
-            "keyword": "man united key players",
-            "identity_keyword": "Manchester United squad",
-            "text": "Manchester United look to their experienced attackers and midfield control to dominate games.",
-            "duration": 4,
-            "visual_type": "identity"
-        },
-
-        # 8️⃣ TACTICAL BATTLE
-        {
-            "keyword": "leeds vs man united tactics",
-            "identity_keyword": "Leeds vs Man United tactics",
-            "text": "This match is a tactical battle between Leeds’ high press and United’s structured buildup play.",
+            "keyword": "mountain lion attack survival",
+            "identity_keyword": "Mountain lion attack survival tactics",
+            "text": "Authorities say quick reactions and defensive actions helped the man escape serious injury.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 9️⃣ HEAD-TO-HEAD HISTORY
+        # 5️⃣ LATER SUSPECTED FATAL ATTACK
         {
-            "keyword": "leeds vs man united head to head",
-            "identity_keyword": "Leeds United vs Manchester United history",
-            "text": "Historically, Manchester United have held the edge, but Leeds at home are never easy to beat.",
+            "keyword": "suspected fatal mountain lion attack colorado",
+            "identity_keyword": "Colorado fatal wildlife attack",
+            "text": "Weeks later, officials began investigating a separate suspected fatal mountain lion attack in the same region.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 🔟 FAN & RIVALRY ATMOSPHERE
+        # 6️⃣ CONNECTION UNDER INVESTIGATION
         {
-            "keyword": "leeds man united rivalry",
-            "identity_keyword": "Roses rivalry football",
-            "text": "The rivalry between Leeds and Manchester United is fueled by history, pride, and intense fan culture.",
-            "duration": 4,
-            "visual_type": "emotion"
-        },
-
-        # 1️⃣1️⃣ WHERE TO WATCH
-        {
-            "keyword": "where to watch leeds united vs manchester united",
-            "identity_keyword": "Leeds United vs Manchester United live stream",
-            "text": "Fans can watch Leeds United versus Manchester United live on official Premier League broadcasters.",
+            "keyword": "mountain lion attack investigation",
+            "identity_keyword": "Colorado Parks and Wildlife investigation",
+            "text": "Wildlife authorities are examining whether the two incidents are connected.",
             "duration": 4,
             "visual_type": "identity"
         },
 
-        # 1️⃣2️⃣ GLOBAL AUDIENCE
+        # 7️⃣ WILDLIFE AUTHORITY STATEMENT
         {
-            "keyword": "man united fans worldwide leeds fans",
-            "identity_keyword": "Premier League global audience",
-            "text": "The match draws millions of viewers worldwide, highlighting the Premier League’s global appeal.",
+            "keyword": "colorado wildlife officials statement",
+            "identity_keyword": "Colorado Parks and Wildlife",
+            "text": "Officials urge the public to remain cautious and report aggressive wildlife behavior immediately.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 8️⃣ MOUNTAIN LION BEHAVIOR CONTEXT
+        {
+            "keyword": "mountain lion behavior near humans",
+            "identity_keyword": "Mountain lion behavior",
+            "text": "Experts explain that mountain lion encounters remain rare but can increase when habitats overlap with human activity.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 9️⃣ SAFETY GUIDELINES
+        {
+            "keyword": "mountain lion safety tips",
+            "identity_keyword": "Mountain lion safety guidelines",
+            "text": "Hikers are advised to stay alert, avoid hiking alone, and never turn their back on a mountain lion.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 🔟 PUBLIC AWARENESS
+        {
+            "keyword": "colorado wildlife safety awareness",
+            "identity_keyword": "Wildlife safety awareness",
+            "text": "The incidents have raised awareness about wildlife safety across Colorado’s outdoor communities.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
-        # 1️⃣3️⃣ MATCH EXPECTATION
+        # 1️⃣1️⃣ MEDIA COVERAGE
         {
-            "keyword": "leeds vs man united prediction",
-            "identity_keyword": "Leeds vs Man United expectations",
-            "text": "With pride and points on the line, fans can expect an intense and closely contested encounter.",
+            "keyword": "mountain lion attack news",
+            "identity_keyword": "Mountain lion attack media coverage",
+            "text": "News outlets continue to follow developments as authorities release verified updates.",
+            "duration": 4,
+            "visual_type": "emotion"
+        },
+
+        # 1️⃣2️⃣ CURRENT STATUS
+        {
+            "keyword": "colorado mountain lion attack update",
+            "identity_keyword": "Colorado mountain lion situation",
+            "text": "Investigations are ongoing, with officials emphasizing public safety and factual reporting.",
+            "duration": 4,
+            "visual_type": "identity"
+        },
+
+        # 1️⃣3️⃣ KEY TAKEAWAY
+        {
+            "keyword": "mountain lion encounter lesson",
+            "identity_keyword": "Mountain lion encounter awareness",
+            "text": "The events highlight the importance of preparedness when exploring wildlife-rich areas.",
             "duration": 4,
             "visual_type": "emotion"
         },
 
         # 1️⃣4️⃣ CONCLUSION
         {
-            "keyword": "leeds united manchester united match summary",
-            "identity_keyword": "Leeds vs Man United overview",
-            "text": "Leeds United versus Manchester United remains a must-watch fixture in English football.",
+            "keyword": "colorado wildlife news",
+            "identity_keyword": "Colorado wildlife overview",
+            "text": "While rare, mountain lion encounters remind us of the need to respect wildlife and follow safety guidance.",
             "duration": 4,
             "visual_type": "emotion"
         }
