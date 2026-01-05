@@ -2,7 +2,7 @@ import requests
 
 STORYBOARD_URL = (
     "https://raw.githubusercontent.com/"
-    "prithvirajput510-web/storyboard-storage/main/scripts/storyboard_latest.json"
+    "prithvirajput510-web/storyboard-storage/main/storyboard_latest.json"
 )
 
 def get_storyboard():
@@ -14,6 +14,11 @@ def get_storyboard():
     storyboard = response.json()
 
     if not isinstance(storyboard, list):
-        raise ValueError("Invalid storyboard format (expected list)")
+        raise ValueError(
+            f"Invalid storyboard format: expected list, got {type(storyboard)}"
+        )
+
+    if not storyboard:
+        raise ValueError("Storyboard is empty")
 
     return storyboard
