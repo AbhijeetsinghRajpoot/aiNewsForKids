@@ -3,7 +3,12 @@ name: Run Story Generator (Wikipedia + Pixabay)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # Daily at 12:00 AM UTC
+    - cron: "0 */4 * * *" # Every 4 hours (UTC)
+
+# Prevent overlapping runs
+concurrency:
+  group: story-generator
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -15,6 +20,8 @@ jobs:
       COQUI_TOS_AGREED: "1"
       SHORTS_MODE: "true"
       FFMPEG_BINARY: "/usr/bin/ffmpeg"
+      PYTHONUNBUFFERED: "1"   # Better logs
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
 
     steps:
       # -----------------------------
@@ -33,12 +40,13 @@ jobs:
           cache: "pip"
 
       # -----------------------------
-      # System Dependencies (NO sed)
+      # System Dependencies
       # -----------------------------
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
+        timeout-minutes: 5
 
       # -----------------------------
       # Increase file descriptor limit
@@ -48,7 +56,7 @@ jobs:
           ulimit -n 4096 || true
 
       # -----------------------------
-      # Install CPU-only PyTorch
+      # Install CPU-only PyTorch (cached)
       # -----------------------------
       - name: Install CPU-only PyTorch
         run: |
@@ -74,8 +82,20 @@ jobs:
           echo '${{ secrets.YOUTUBE_TOKEN_JSON }}' > token.json
 
       # -----------------------------
-      # Run automation
+      # Sanity checks (fail early)
+      # -----------------------------
+      - name: Validate environment
+        run: |
+          test -f client_secret.json
+          test -f token.json
+          python --version
+          ffmpeg -version
+
+      # -----------------------------
+      # Run automation (with grouping)
       # -----------------------------
       - name: Run automation script
         run: |
+          echo "::group::Run Story Generator"
           python main.py
+          echo "::endgroup::"
