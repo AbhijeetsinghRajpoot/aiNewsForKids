@@ -1,13 +1,11 @@
 import os
 import sys
-import re
 
-import storyboard_data
+import script_generator
 import story_generator
 import youtube_uploader
 
 MAX_TITLE_LENGTH = 95
-MAX_HASHTAGS = 12
 
 
 # --------------------------------------------------
@@ -22,9 +20,8 @@ def prepare_environment():
 # --------------------------------------------------
 # TITLE
 # --------------------------------------------------
-def build_title(scene):
-    title = scene.get("title") or scene.get("keyword") or "College Football Highlights"
-    title = title.strip()
+def build_title(metadata):
+    title = metadata.get("video_title", "Trending Update")
 
     if len(title) > MAX_TITLE_LENGTH:
         title = title[: MAX_TITLE_LENGTH - 3] + "..."
@@ -33,89 +30,48 @@ def build_title(scene):
 
 
 # --------------------------------------------------
-# HASHTAG GENERATOR
-# --------------------------------------------------
-def generate_hashtags(scene):
-    hashtags = set()
-
-    # From title
-    title = scene.get("title", "")
-    hashtags.update(title.lower().split())
-
-    # From keyword
-    keyword = scene.get("keyword", "")
-    hashtags.update(keyword.lower().split())
-
-    # From optional tags array
-    extra_tags = scene.get("tags", [])
-    for tag in extra_tags:
-        hashtags.add(tag.lower().replace(" ", ""))
-
-    # Cleanup words
-    cleaned = []
-    for tag in hashtags:
-        tag = re.sub(r"[^a-z0-9]", "", tag)
-        if len(tag) > 2:
-            cleaned.append(f"#{tag}")
-
-    # Add mandatory reach tags
-    cleaned.extend(["#shorts", "#trending", "#sports"])
-
-    # Deduplicate + limit
-    final_tags = list(dict.fromkeys(cleaned))[:MAX_HASHTAGS]
-
-    return " ".join(final_tags)
-
-
-# --------------------------------------------------
 # DESCRIPTION
 # --------------------------------------------------
-def build_description(scene):
-    description = scene.get(
-        "description",
-        "Latest college football game updates, scores, and highlights."
+def build_description(metadata):
+    hashtags = " ".join(
+        f"#{tag.replace(' ', '')}"
+        for tag in metadata.get("tags", [])
     )
 
-    hashtags = generate_hashtags(scene)
-
-    description += (
-        "\n\n📸 Images: Wikipedia (Wikimedia Commons)"
-        "\n🎬 Videos: Pixabay (Royalty Free)"
-        "\n🗣️ Voice: AI Generated\n\n"
-        f"{hashtags}"
+    return (
+        f"{metadata.get('video_title')}\n\n"
+        "📸 Images: Wikipedia (Wikimedia Commons)\n"
+        "🎬 Videos: Pixabay (Royalty Free)\n"
+        "🗣️ Voice: AI Generated\n\n"
+        f"{hashtags} #shorts #trending"
     )
-
-    return description
 
 
 # --------------------------------------------------
-# MAIN AUTOMATION
+# MAIN
 # --------------------------------------------------
-def run_automation():
+def run_automation(topic: str):
     prepare_environment()
 
-    print("STEP 1: Loading storyboard...")
-    storyboard = storyboard_data.get_storyboard()
+    print("STEP 1: Generating storyboard...")
+    data = script_generator.generate_full_storyboard(topic)
 
-    if not storyboard or not isinstance(storyboard, list):
-        raise RuntimeError("Storyboard is empty or invalid")
+    metadata = data["metadata"]
+    storyboard = data["scenes"]
 
-    first_scene = storyboard[0]
-
-    video_title = build_title(first_scene)
-    video_description = build_description(first_scene)
+    video_title = build_title(metadata)
+    video_description = build_description(metadata)
 
     print(f"VIDEO TITLE: {video_title}")
-    print(f"HASHTAGS: {generate_hashtags(first_scene)}")
     print("SHORTS MODE: ENABLED")
 
     print("STEP 2: Generating video...")
     video_file = story_generator.create_video(storyboard)
 
-    if not os.path.exists(video_file):
+    if not video_file or not os.path.exists(video_file):
         raise RuntimeError("Video generation failed")
 
-    print(f"Video generated successfully: {video_file}")
+    print(f"Video generated: {video_file}")
 
     print("STEP 3: Uploading to YouTube...")
     youtube_uploader.upload_to_youtube(
@@ -129,7 +85,8 @@ def run_automation():
 
 if __name__ == "__main__":
     try:
-        run_automation()
+        topic = sys.argv[1] if len(sys.argv) > 1 else "Breaking News"
+        run_automation(topic)
     except Exception as e:
         print("❌ AUTOMATION FAILED")
         print(e)
