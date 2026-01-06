@@ -37,7 +37,7 @@ KEYWORD_FALLBACKS = [
 SPEAKER_WAV = "assets/voice.wav"
 
 # ============================================================
-# TEXT CLEANING (CRITICAL FOR XTTS)
+# TEXT CLEANING (XTTS SAFE)
 # ============================================================
 def clean_text(text):
     text = unicodedata.normalize("NFKD", text)
@@ -111,7 +111,12 @@ def download_pixabay_video(keyword, folder):
     try:
         r = requests.get(
             "https://pixabay.com/api/videos/",
-            params={"key": PIXABAY_API_KEY, "q": keyword, "per_page": 3, "safesearch": "true"},
+            params={
+                "key": PIXABAY_API_KEY,
+                "q": keyword,
+                "per_page": 3,
+                "safesearch": "true"
+            },
             timeout=10
         ).json()
 
@@ -122,6 +127,7 @@ def download_pixabay_video(keyword, folder):
         path = os.path.join(folder, "pixabay.mp4")
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=15).content)
+
         return path
     except:
         return None
@@ -130,7 +136,12 @@ def download_pixabay_image(keyword, folder):
     try:
         r = requests.get(
             "https://pixabay.com/api/",
-            params={"key": PIXABAY_API_KEY, "q": keyword, "orientation": "vertical", "per_page": 3},
+            params={
+                "key": PIXABAY_API_KEY,
+                "q": keyword,
+                "orientation": "vertical",
+                "per_page": 3
+            },
             timeout=10
         ).json()
 
@@ -139,6 +150,7 @@ def download_pixabay_image(keyword, folder):
 
         url = r["hits"][0]["largeImageURL"]
         path = os.path.join(folder, "pixabay.jpg")
+
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=10).content)
 
@@ -150,7 +162,7 @@ def download_pixabay_image(keyword, folder):
         return None
 
 # ============================================================
-# WIKIPEDIA (HARDENED)
+# WIKIPEDIA IMAGE
 # ============================================================
 def download_wikipedia_image(keyword, folder):
     try:
@@ -175,13 +187,12 @@ def download_wikipedia_image(keyword, folder):
         with open(path, "wb") as f:
             f.write(img_resp.content)
 
-        # CRITICAL VALIDATION
         with Image.open(path) as im:
             im.verify()
 
         return path
     except Exception as e:
-        print("[WIKIPEDIA IMAGE SKIPPED]", keyword, e)
+        print("[WIKI IMAGE SKIPPED]", keyword, e)
         return None
 
 # ============================================================
@@ -198,7 +209,7 @@ def create_text_graphic(text, folder):
     return path
 
 # ============================================================
-# MAIN VIDEO GENERATOR
+# MAIN VIDEO GENERATOR (FIXED)
 # ============================================================
 def create_video(storyboard):
     segments = []
@@ -222,19 +233,20 @@ def create_video(storyboard):
         )
 
         audio = AudioFileClip(audio_path)
-        remaining = MAX_SHORT_DURATION - total
-        duration = min(max(audio.duration, entry.get("duration", audio.duration)), remaining)
 
-        if duration <= 0:
+        remaining = MAX_SHORT_DURATION - total
+        if remaining <= 0:
             print("[SCENE SKIPPED: NO TIME LEFT]")
             continue
 
-        audio = audio.subclip(0, duration)
+        # 🔒 AUDIO IS SOURCE OF TRUTH
+        audio = audio.subclip(0, min(audio.duration, remaining))
+        duration = audio.duration
         total += duration
 
         clip = None
 
-        # ---- EMOTION (VIDEO) ----
+        # ---- EMOTION VIDEO ----
         if entry.get("visual_type") == "emotion":
             for kw in [entry.get("keyword")] + KEYWORD_FALLBACKS:
                 if not kw:
@@ -244,7 +256,7 @@ def create_video(storyboard):
                     clip = ken_burns(normalize_video(video, duration))
                     break
 
-        # ---- IDENTITY (WIKI IMAGE) ----
+        # ---- IDENTITY IMAGE ----
         if not clip and entry.get("visual_type") == "identity":
             img = download_wikipedia_image(entry.get("identity_keyword"), folder)
             if img:
@@ -265,7 +277,10 @@ def create_video(storyboard):
             fallback = create_text_graphic(tts_text, folder)
             clip = ImageClip(fallback).set_duration(duration)
 
-        segments.append(clip.set_audio(audio))
+        # 🔐 FINAL HARD SYNC
+        clip = clip.set_duration(audio.duration).set_audio(audio)
+        segments.append(clip)
+
         print(f"[SCENE {i}] DONE ({duration:.2f}s)")
 
         if total >= MAX_SHORT_DURATION:
