@@ -20,11 +20,10 @@ def prepare_environment():
 
 
 # --------------------------------------------------
-# TITLE (UNCHANGED LOGIC)
+# TITLE (FROM METADATA)
 # --------------------------------------------------
-def build_title(scene):
-    title = scene.get("title") or scene.get("keyword") or "College Football Highlights"
-    title = title.strip()
+def build_title(metadata: dict) -> str:
+    title = metadata.get("video_title", "Breaking Update").strip()
 
     if len(title) > MAX_TITLE_LENGTH:
         title = title[: MAX_TITLE_LENGTH - 3] + "..."
@@ -33,48 +32,54 @@ def build_title(scene):
 
 
 # --------------------------------------------------
-# DYNAMIC HASHTAGS (NEW)
+# DYNAMIC HASHTAGS (FROM METADATA + SCENES)
 # --------------------------------------------------
-def generate_hashtags(storyboard):
-    words = set()
+def generate_hashtags(metadata: dict, scenes: list) -> str:
+    tags = []
 
-    for scene in storyboard[:5]:  # first scenes = most relevant
-        words.update(scene.get("keyword", "").lower().split())
-        words.update(scene.get("identity_keyword", "").lower().split())
-        words.update(scene.get("text", "").lower().split())
+    # 1️⃣ AI-generated tags (highest priority)
+    for tag in metadata.get("tags", []):
+        clean = re.sub(r"[^a-z0-9]", "", tag.lower())
+        if clean:
+            tags.append(f"#{clean}")
 
-    hashtags = []
-    for word in words:
-        word = re.sub(r"[^a-z0-9]", "", word)
-        if 3 <= len(word) <= 20:
-            hashtags.append(f"#{word}")
+    # 2️⃣ Backup from scenes (if metadata is weak)
+    if len(tags) < 6:
+        words = set()
+        for scene in scenes[:4]:
+            words.update(scene.get("keyword", "").lower().split())
+            words.update(scene.get("identity_keyword", "").lower().split())
 
-    # mandatory reach tags
-    hashtags.extend(["#shorts", "#trending"])
+        for word in words:
+            word = re.sub(r"[^a-z0-9]", "", word)
+            if 3 <= len(word) <= 20:
+                tags.append(f"#{word}")
 
-    # dedupe + limit
-    return " ".join(list(dict.fromkeys(hashtags))[:MAX_HASHTAGS])
+    # 3️⃣ Mandatory reach tags
+    tags.extend(["#shorts", "#trending"])
+
+    # Deduplicate + limit
+    return " ".join(list(dict.fromkeys(tags))[:MAX_HASHTAGS])
 
 
 # --------------------------------------------------
-# DESCRIPTION (DYNAMIC)
+# DESCRIPTION (HIGH CTR)
 # --------------------------------------------------
-def build_description(scene, storyboard):
-    description = scene.get(
-        "description",
-        "Latest verified updates and highlights."
+def build_description(metadata: dict, scenes: list) -> str:
+    lead_text = scenes[0].get(
+        "text",
+        "Latest verified update."
     )
 
-    hashtags = generate_hashtags(storyboard)
+    hashtags = generate_hashtags(metadata, scenes)
 
-    description += (
-        "\n\n📸 Images: Wikipedia (Wikimedia Commons)"
-        "\n🎬 Videos: Pixabay (Royalty Free)"
-        "\n🗣️ Voice: AI Generated\n\n"
+    return (
+        f"{lead_text}\n\n"
+        "📸 Images: Wikipedia (Wikimedia Commons)\n"
+        "🎬 Videos: Pixabay (Royalty Free)\n"
+        "🗣️ Voice: AI Generated\n\n"
         f"{hashtags}"
     )
-
-    return description
 
 
 # --------------------------------------------------
@@ -86,21 +91,23 @@ def run_automation():
     print("STEP 1: Loading storyboard...")
     storyboard = storyboard_data.get_storyboard()
 
-    if not storyboard or not isinstance(storyboard, list):
-        raise RuntimeError("Storyboard is empty or invalid")
+    if not storyboard or not isinstance(storyboard, list) or len(storyboard) < 2:
+        raise RuntimeError("Storyboard format invalid")
 
-    first_scene = storyboard[0]
+    # ✅ Extract metadata + scenes
+    metadata = storyboard[0]
+    scenes = storyboard[1:]
 
-    video_title = build_title(first_scene)
-    video_description = build_description(first_scene, storyboard)
+    video_title = build_title(metadata)
+    video_description = build_description(metadata, scenes)
 
     print(f"VIDEO TITLE: {video_title}")
     print("SHORTS MODE: ENABLED")
 
     print("STEP 2: Generating video...")
-    video_file = story_generator.create_video(storyboard)
+    video_file = story_generator.create_video(scenes)
 
-    if not os.path.exists(video_file):
+    if not video_file or not os.path.exists(video_file):
         raise RuntimeError("Video generation failed")
 
     print(f"Video generated successfully: {video_file}")
