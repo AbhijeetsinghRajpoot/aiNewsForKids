@@ -1,15 +1,32 @@
+# ===============================
+# CORE ML (CPU ONLY)
+# ===============================
 torch==2.1.0+cpu
 torchaudio==2.1.0+cpu
 transformers==4.36.2
 
+# ===============================
+# TEXT TO SPEECH
+# ===============================
+TTS>=0.22.0
+
+# ===============================
+# VIDEO / IMAGE
+# ===============================
 moviepy==1.0.3
-pillow<10
+pillow>=10.0.0
+numpy>=1.24.0
 decorator==4.4.2
-requests
-numpy
-TTS
+
+# ===============================
+# NETWORK / APIs
+# ===============================
+requests>=2.31.0
+
+# ===============================
+# OPTIONAL (IMAGE SEARCH / YT API)
+# ===============================
 google-images-search
 google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2
-requests
