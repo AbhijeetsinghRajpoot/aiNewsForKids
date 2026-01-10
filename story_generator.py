@@ -3,8 +3,20 @@ import requests
 import urllib.parse
 import unicodedata
 from PIL import Image, ImageDraw, ImageFont
+
+# ============================================================
+# PILLOW 10+ COMPATIBILITY
+# ============================================================
 if not hasattr(Image, "ANTIALIAS"):
     Image.ANTIALIAS = Image.Resampling.LANCZOS
+
+def get_text_size(draw, text, font):
+    """Pillow 10+ safe text size"""
+    if hasattr(draw, "textbbox"):
+        bbox = draw.textbbox((0, 0), text, font=font)
+        return bbox[2] - bbox[0], bbox[3] - bbox[1]
+    else:
+        return draw.textsize(text, font=font)
 
 from moviepy.editor import (
     ImageClip,
@@ -128,6 +140,7 @@ def download_pixabay_video(keyword, folder):
 
         url = r["hits"][0]["videos"]["large"]["url"]
         path = os.path.join(folder, "pixabay.mp4")
+
         with open(path, "wb") as f:
             f.write(requests.get(url, timeout=15).content)
 
@@ -198,7 +211,7 @@ def download_wikipedia_image(keyword, folder):
         return None
 
 # ============================================================
-# NEWS SUBTITLE GENERATOR
+# NEWS SUBTITLE GENERATOR (FIXED)
 # ============================================================
 def create_news_subtitle(text, folder):
     img = Image.new("RGBA", (SHORT_WIDTH, 220), (0, 0, 0, 0))
@@ -212,9 +225,11 @@ def create_news_subtitle(text, folder):
     max_chars = 28
     words = text.split()
     lines, line = [], ""
+
     for w in words:
-        if len(line + " " + w) <= max_chars:
-            line += (" " if line else "") + w
+        test = f"{line} {w}".strip()
+        if len(test) <= max_chars:
+            line = test
         else:
             lines.append(line)
             line = w
@@ -231,7 +246,7 @@ def create_news_subtitle(text, folder):
 
     y = bg_y + 10
     for l in lines:
-        w, h = draw.textsize(l, font=font)
+        w, h = get_text_size(draw, l, font)
         draw.text(
             ((SHORT_WIDTH - w) // 2, y),
             l,
