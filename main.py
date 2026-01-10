@@ -28,7 +28,7 @@ def build_title(metadata: dict) -> str:
     if len(title) > MAX_TITLE_LENGTH:
         title = title[: MAX_TITLE_LENGTH - 3] + "..."
 
-    return f"🔥 {title}"
+    return title
 
 
 # --------------------------------------------------
