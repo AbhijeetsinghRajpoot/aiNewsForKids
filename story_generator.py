@@ -1,5 +1,4 @@
 import os
-import math
 import requests
 import urllib.parse
 import unicodedata
@@ -37,6 +36,7 @@ if not PIXABAY_API_KEY:
 SHORT_W, SHORT_H = 720, 1280
 MAX_DURATION = 59
 SPEAKER_WAV = "assets/voice.wav"
+FALLBACK_IMG = "assets/fallback.jpg"
 
 HEADERS = {
     "User-Agent": "ShortsBot/1.0",
@@ -60,8 +60,10 @@ def ensure_speaker():
     os.makedirs("assets", exist_ok=True)
     if not os.path.exists(SPEAKER_WAV):
         url = "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0001.wav"
+        r = requests.get(url, timeout=20)
+        r.raise_for_status()
         with open(SPEAKER_WAV, "wb") as f:
-            f.write(requests.get(url, timeout=20).content)
+            f.write(r.content)
 
 ensure_speaker()
 
@@ -71,85 +73,124 @@ tts = TTS(
 )
 
 # ============================================================
-# VISUAL HELPERS
+# VISUAL HELPERS (SAFE)
 # ============================================================
 def fit_image(src, dst):
-    with Image.open(src).convert("RGB") as img:
-        sw, sh = img.size
-        scale = max(SHORT_W / sw, SHORT_H / sh)
-        img = img.resize((int(sw * scale), int(sh * scale)), Image.Resampling.LANCZOS)
-        left = (img.width - SHORT_W) // 2
-        top = (img.height - SHORT_H) // 2
-        img.crop((left, top, left + SHORT_W, top + SHORT_H)).save(dst, "JPEG", quality=95)
+    if not src or not os.path.exists(src):
+        return False
+    try:
+        with Image.open(src).convert("RGB") as img:
+            sw, sh = img.size
+            scale = max(SHORT_W / sw, SHORT_H / sh)
+            img = img.resize(
+                (int(sw * scale), int(sh * scale)),
+                Image.Resampling.LANCZOS
+            )
+            left = (img.width - SHORT_W) // 2
+            top = (img.height - SHORT_H) // 2
+            img.crop(
+                (left, top, left + SHORT_W, top + SHORT_H)
+            ).save(dst, "JPEG", quality=95)
+        return True
+    except Exception:
+        return False
 
 def ken_burns(clip, zoom=1.07):
     return clip.resize(lambda t: 1 + (zoom - 1) * (t / clip.duration))
 
 # ============================================================
-# MEDIA FETCH
+# MEDIA FETCH (SAFE)
 # ============================================================
 def pixabay_video(q, folder):
-    r = requests.get("https://pixabay.com/api/videos/", params={
-        "key": PIXABAY_API_KEY,
-        "q": q,
-        "per_page": 3,
-        "safesearch": "true"
-    }).json()
+    try:
+        r = requests.get(
+            "https://pixabay.com/api/videos/",
+            params={
+                "key": PIXABAY_API_KEY,
+                "q": q,
+                "per_page": 3,
+                "safesearch": "true"
+            },
+            timeout=10
+        ).json()
 
-    if not r.get("hits"):
+        if not r.get("hits"):
+            return None
+
+        url = r["hits"][0]["videos"]["large"]["url"]
+        path = os.path.join(folder, "bg.mp4")
+        with open(path, "wb") as f:
+            f.write(requests.get(url, timeout=15).content)
+        return path
+    except:
         return None
-
-    url = r["hits"][0]["videos"]["large"]["url"]
-    path = os.path.join(folder, "bg.mp4")
-    with open(path, "wb") as f:
-        f.write(requests.get(url).content)
-    return path
 
 def pixabay_image(q, folder):
-    r = requests.get("https://pixabay.com/api/", params={
-        "key": PIXABAY_API_KEY,
-        "q": q,
-        "orientation": "vertical",
-        "per_page": 3
-    }).json()
+    try:
+        r = requests.get(
+            "https://pixabay.com/api/",
+            params={
+                "key": PIXABAY_API_KEY,
+                "q": q,
+                "orientation": "vertical",
+                "per_page": 3
+            },
+            timeout=10
+        ).json()
 
-    if not r.get("hits"):
+        if not r.get("hits"):
+            return None
+
+        path = os.path.join(folder, "bg.jpg")
+        with open(path, "wb") as f:
+            f.write(requests.get(r["hits"][0]["largeImageURL"], timeout=10).content)
+
+        Image.open(path).verify()
+        return path
+    except:
         return None
-
-    path = os.path.join(folder, "bg.jpg")
-    with open(path, "wb") as f:
-        f.write(requests.get(r["hits"][0]["largeImageURL"]).content)
-    return path
 
 def wiki_image(q, folder):
     if not q:
         return None
-    url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(q)}"
-    r = requests.get(url, headers=HEADERS).json()
-    img = r.get("thumbnail", {}).get("source")
-    if not img or img.endswith(".svg"):
+    try:
+        api = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(q)}"
+        r = requests.get(api, headers=HEADERS, timeout=10)
+        if r.status_code != 200:
+            return None
+
+        data = r.json()
+        img = data.get("thumbnail", {}).get("source")
+        if not img or img.lower().endswith((".svg", ".webp")):
+            return None
+
+        path = os.path.join(folder, "wiki.jpg")
+        with open(path, "wb") as f:
+            f.write(requests.get(img, timeout=10).content)
+
+        Image.open(path).verify()
+        return path
+    except:
         return None
-    path = os.path.join(folder, "wiki.jpg")
-    with open(path, "wb") as f:
-        f.write(requests.get(img).content)
-    return path
 
 # ============================================================
-# ADVANCED WORD-SYNC SUBTITLES
+# WORD-CHUNK SUBTITLES (STABLE)
 # ============================================================
 def subtitle_word_clips(text, duration):
     words = text.split()
-    words_per_chunk = 3
+    chunk_size = 3
     chunks = [
-        " ".join(words[i:i + words_per_chunk])
-        for i in range(0, len(words), words_per_chunk)
+        " ".join(words[i:i + chunk_size])
+        for i in range(0, len(words), chunk_size)
     ]
 
-    per_chunk_time = duration / len(chunks)
+    per = duration / len(chunks)
     clips = []
 
-    font_size = 64
-    font = ImageFont.truetype("assets/Roboto-Bold.ttf", font_size)
+    try:
+        font = ImageFont.truetype("assets/Roboto-Bold.ttf", 64)
+    except:
+        font = ImageFont.load_default()
 
     for i, chunk in enumerate(chunks):
         img = Image.new("RGBA", (SHORT_W, 220), (0, 0, 0, 0))
@@ -162,21 +203,20 @@ def subtitle_word_clips(text, duration):
             [(0, y - 25), (SHORT_W, y + h + 25)],
             fill=(0, 0, 0, 190)
         )
-
         d.text(
             ((SHORT_W - w) // 2, y),
             chunk,
             font=font,
-            fill="#FFFFFF"
+            fill="white"
         )
 
-        p = f"/tmp/sub_{i}.png"
+        p = f"temp_sub_{i}.png"
         img.save(p)
 
         clips.append(
             ImageClip(p)
-            .set_start(i * per_chunk_time)
-            .set_duration(per_chunk_time)
+            .set_start(i * per)
+            .set_duration(per)
             .set_position(("center", "bottom"))
         )
 
@@ -186,7 +226,7 @@ def subtitle_word_clips(text, duration):
 # MAIN
 # ============================================================
 def create_video(storyboard):
-    final_clips = []
+    final = []
     total = 0
 
     for i, s in enumerate(storyboard):
@@ -213,11 +253,18 @@ def create_video(storyboard):
             for k in [s.get("keyword")] + KEYWORD_FALLBACKS:
                 v = pixabay_video(k, folder)
                 if v:
-                    bg = ken_burns(VideoFileClip(v).subclip(0, duration).resize(height=SHORT_H))
+                    bg = ken_burns(
+                        VideoFileClip(v).subclip(0, duration).resize(height=SHORT_H)
+                    )
                     break
 
         if not bg:
-            img = wiki_image(s.get("identity_keyword"), folder) or pixabay_image(s.get("keyword"), folder)
+            img = (
+                wiki_image(s.get("identity_keyword"), folder)
+                or pixabay_image(s.get("keyword"), folder)
+                or FALLBACK_IMG
+            )
+
             safe = f"{folder}/safe.jpg"
             fit_image(img, safe)
             bg = ken_burns(ImageClip(safe).set_duration(duration))
@@ -229,13 +276,13 @@ def create_video(storyboard):
             size=(SHORT_W, SHORT_H)
         ).set_audio(audio)
 
-        final_clips.append(clip)
+        final.append(clip)
 
         if total >= MAX_DURATION:
             break
 
-    final = concatenate_videoclips(final_clips, method="compose")
-    final.write_videofile(
+    out = concatenate_videoclips(final, method="compose")
+    out.write_videofile(
         "final_video.mp4",
         fps=30,
         codec="libx264",
