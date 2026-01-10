@@ -3,6 +3,9 @@ import requests
 import urllib.parse
 import unicodedata
 from PIL import Image, ImageDraw, ImageFont
+if not hasattr(Image, "ANTIALIAS"):
+    Image.ANTIALIAS = Image.Resampling.LANCZOS
+
 from moviepy.editor import (
     ImageClip,
     VideoFileClip,
