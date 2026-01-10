@@ -7,6 +7,7 @@ from moviepy.editor import (
     ImageClip,
     VideoFileClip,
     AudioFileClip,
+    CompositeVideoClip,
     concatenate_videoclips
 )
 from TTS.api import TTS
@@ -28,8 +29,7 @@ SHORT_HEIGHT = 1280
 MAX_SHORT_DURATION = 59
 
 KEYWORD_FALLBACKS = [
-    "world news background",
-    "global politics",
+    "breaking news background",
     "news studio background",
     "world map animation"
 ]
@@ -191,25 +191,58 @@ def download_wikipedia_image(keyword, folder):
             im.verify()
 
         return path
-    except Exception as e:
-        print("[WIKI IMAGE SKIPPED]", keyword, e)
+    except:
         return None
 
 # ============================================================
-# TEXT FALLBACK
+# NEWS SUBTITLE GENERATOR
 # ============================================================
-def create_text_graphic(text, folder):
-    img = Image.new("RGB", (SHORT_WIDTH, SHORT_HEIGHT), (15, 15, 15))
+def create_news_subtitle(text, folder):
+    img = Image.new("RGBA", (SHORT_WIDTH, 220), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    font = ImageFont.load_default()
-    wrapped = "\n".join(text[i:i + 32] for i in range(0, len(text), 32))
-    draw.text((40, 420), wrapped, fill="white", font=font, spacing=10)
-    path = os.path.join(folder, "text.jpg")
-    img.save(path, "JPEG", quality=95)
+
+    try:
+        font = ImageFont.truetype("assets/Roboto-Bold.ttf", 46)
+    except:
+        font = ImageFont.load_default()
+
+    max_chars = 28
+    words = text.split()
+    lines, line = [], ""
+    for w in words:
+        if len(line + " " + w) <= max_chars:
+            line += (" " if line else "") + w
+        else:
+            lines.append(line)
+            line = w
+    if line:
+        lines.append(line)
+
+    text_height = len(lines) * 55
+    bg_y = 220 - text_height - 20
+
+    draw.rectangle(
+        [(0, bg_y), (SHORT_WIDTH, 220)],
+        fill=(0, 0, 0, 180)
+    )
+
+    y = bg_y + 10
+    for l in lines:
+        w, h = draw.textsize(l, font=font)
+        draw.text(
+            ((SHORT_WIDTH - w) // 2, y),
+            l,
+            font=font,
+            fill="white"
+        )
+        y += 55
+
+    path = os.path.join(folder, "subtitle.png")
+    img.save(path)
     return path
 
 # ============================================================
-# MAIN VIDEO GENERATOR (FIXED)
+# MAIN VIDEO GENERATOR
 # ============================================================
 def create_video(storyboard):
     segments = []
@@ -221,7 +254,6 @@ def create_video(storyboard):
 
         print(f"[SCENE {i}] START")
 
-        # ---- TTS ----
         audio_path = f"{folder}/audio.wav"
         tts_text = clean_text(entry["text"])
 
@@ -233,30 +265,23 @@ def create_video(storyboard):
         )
 
         audio = AudioFileClip(audio_path)
-
         remaining = MAX_SHORT_DURATION - total
         if remaining <= 0:
-            print("[SCENE SKIPPED: NO TIME LEFT]")
-            continue
+            break
 
-        # 🔒 AUDIO IS SOURCE OF TRUTH
         audio = audio.subclip(0, min(audio.duration, remaining))
         duration = audio.duration
         total += duration
 
         clip = None
 
-        # ---- EMOTION VIDEO ----
         if entry.get("visual_type") == "emotion":
             for kw in [entry.get("keyword")] + KEYWORD_FALLBACKS:
-                if not kw:
-                    continue
                 video = download_pixabay_video(kw, folder)
                 if video:
                     clip = ken_burns(normalize_video(video, duration))
                     break
 
-        # ---- IDENTITY IMAGE ----
         if not clip and entry.get("visual_type") == "identity":
             img = download_wikipedia_image(entry.get("identity_keyword"), folder)
             if img:
@@ -264,7 +289,6 @@ def create_video(storyboard):
                 if fit_image_to_viewport(img, safe):
                     clip = ken_burns(ImageClip(safe).set_duration(duration))
 
-        # ---- IMAGE FALLBACK ----
         if not clip:
             img = download_pixabay_image(entry.get("keyword"), folder)
             if img:
@@ -272,14 +296,19 @@ def create_video(storyboard):
                 if fit_image_to_viewport(img, safe):
                     clip = ken_burns(ImageClip(safe).set_duration(duration))
 
-        # ---- TEXT FALLBACK ----
-        if not clip:
-            fallback = create_text_graphic(tts_text, folder)
-            clip = ImageClip(fallback).set_duration(duration)
+        subtitle_img = create_news_subtitle(tts_text, folder)
+        subtitle_clip = (
+            ImageClip(subtitle_img)
+            .set_duration(duration)
+            .set_position(("center", "bottom"))
+        )
 
-        # 🔐 FINAL HARD SYNC
-        clip = clip.set_duration(audio.duration).set_audio(audio)
-        segments.append(clip)
+        final_clip = CompositeVideoClip(
+            [clip, subtitle_clip],
+            size=(SHORT_WIDTH, SHORT_HEIGHT)
+        ).set_audio(audio)
+
+        segments.append(final_clip)
 
         print(f"[SCENE {i}] DONE ({duration:.2f}s)")
 
