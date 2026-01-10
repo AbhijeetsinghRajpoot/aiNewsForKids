@@ -1,4 +1,5 @@
 import os
+import math
 import requests
 import urllib.parse
 import unicodedata
@@ -11,12 +12,10 @@ if not hasattr(Image, "ANTIALIAS"):
     Image.ANTIALIAS = Image.Resampling.LANCZOS
 
 def get_text_size(draw, text, font):
-    """Pillow 10+ safe text size"""
     if hasattr(draw, "textbbox"):
-        bbox = draw.textbbox((0, 0), text, font=font)
-        return bbox[2] - bbox[0], bbox[3] - bbox[1]
-    else:
-        return draw.textsize(text, font=font)
+        b = draw.textbbox((0, 0), text, font=font)
+        return b[2] - b[0], b[3] - b[1]
+    return draw.textsize(text, font=font)
 
 from moviepy.editor import (
     ImageClip,
@@ -25,315 +24,217 @@ from moviepy.editor import (
     CompositeVideoClip,
     concatenate_videoclips
 )
+
 from TTS.api import TTS
 
 # ============================================================
-# ENVIRONMENT
+# CONFIG
 # ============================================================
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
 if not PIXABAY_API_KEY:
-    raise RuntimeError("PIXABAY_API_KEY is not set")
+    raise RuntimeError("PIXABAY_API_KEY missing")
+
+SHORT_W, SHORT_H = 720, 1280
+MAX_DURATION = 59
+SPEAKER_WAV = "assets/voice.wav"
 
 HEADERS = {
-    "User-Agent": "YouTubeShortsBot/1.0",
+    "User-Agent": "ShortsBot/1.0",
     "Referer": "https://en.wikipedia.org/"
 }
 
-SHORT_WIDTH = 720
-SHORT_HEIGHT = 1280
-MAX_SHORT_DURATION = 59
-
 KEYWORD_FALLBACKS = [
     "breaking news background",
-    "news studio background",
-    "world map animation"
+    "world economy",
+    "sports crowd stadium"
 ]
 
-SPEAKER_WAV = "assets/voice.wav"
-
 # ============================================================
-# TEXT CLEANING (XTTS SAFE)
+# UTILS
 # ============================================================
 def clean_text(text):
     text = unicodedata.normalize("NFKD", text)
     return text.encode("ascii", "ignore").decode()
 
-# ============================================================
-# SPEAKER VOICE
-# ============================================================
-def ensure_speaker_wav():
+def ensure_speaker():
     os.makedirs("assets", exist_ok=True)
     if not os.path.exists(SPEAKER_WAV):
-        url = (
-            "https://github.com/coqui-ai/TTS/raw/dev/tests/data/"
-            "ljspeech/wavs/LJ001-0001.wav"
-        )
-        r = requests.get(url, timeout=20)
-        r.raise_for_status()
+        url = "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0001.wav"
         with open(SPEAKER_WAV, "wb") as f:
-            f.write(r.content)
+            f.write(requests.get(url, timeout=20).content)
 
-ensure_speaker_wav()
+ensure_speaker()
 
-# ============================================================
-# TTS
-# ============================================================
-tts_client = TTS(
+tts = TTS(
     model_name="tts_models/multilingual/multi-dataset/xtts_v2",
     gpu=False
 )
 
 # ============================================================
-# IMAGE / VIDEO HELPERS
+# VISUAL HELPERS
 # ============================================================
-def fit_image_to_viewport(src, dst):
-    try:
-        with Image.open(src) as img:
-            img = img.convert("RGB")
-            sw, sh = img.size
-            scale = max(SHORT_WIDTH / sw, SHORT_HEIGHT / sh)
-            nw, nh = int(sw * scale), int(sh * scale)
-            img = img.resize((nw, nh), Image.Resampling.LANCZOS)
-            left = (nw - SHORT_WIDTH) // 2
-            top = (nh - SHORT_HEIGHT) // 2
-            img.crop((left, top, left + SHORT_WIDTH, top + SHORT_HEIGHT)).save(
-                dst, "JPEG", quality=95
-            )
-        return True
-    except Exception as e:
-        print("[IMAGE FIT FAILED]", e)
-        return False
+def fit_image(src, dst):
+    with Image.open(src).convert("RGB") as img:
+        sw, sh = img.size
+        scale = max(SHORT_W / sw, SHORT_H / sh)
+        img = img.resize((int(sw * scale), int(sh * scale)), Image.Resampling.LANCZOS)
+        left = (img.width - SHORT_W) // 2
+        top = (img.height - SHORT_H) // 2
+        img.crop((left, top, left + SHORT_W, top + SHORT_H)).save(dst, "JPEG", quality=95)
 
-def ken_burns(clip, zoom=1.08):
+def ken_burns(clip, zoom=1.07):
     return clip.resize(lambda t: 1 + (zoom - 1) * (t / clip.duration))
 
-def normalize_video(path, duration):
-    src = VideoFileClip(path)
-    clip = src.subclip(0, min(duration, src.duration))
-    clip = clip.resize(height=SHORT_HEIGHT)
-    clip = clip.crop(
-        x_center=clip.w / 2,
-        y_center=clip.h / 2,
-        width=SHORT_WIDTH,
-        height=SHORT_HEIGHT
-    )
-    return clip
-
 # ============================================================
-# PIXABAY
+# MEDIA FETCH
 # ============================================================
-def download_pixabay_video(keyword, folder):
-    try:
-        r = requests.get(
-            "https://pixabay.com/api/videos/",
-            params={
-                "key": PIXABAY_API_KEY,
-                "q": keyword,
-                "per_page": 3,
-                "safesearch": "true"
-            },
-            timeout=10
-        ).json()
+def pixabay_video(q, folder):
+    r = requests.get("https://pixabay.com/api/videos/", params={
+        "key": PIXABAY_API_KEY,
+        "q": q,
+        "per_page": 3,
+        "safesearch": "true"
+    }).json()
 
-        if not r.get("hits"):
-            return None
-
-        url = r["hits"][0]["videos"]["large"]["url"]
-        path = os.path.join(folder, "pixabay.mp4")
-
-        with open(path, "wb") as f:
-            f.write(requests.get(url, timeout=15).content)
-
-        return path
-    except:
+    if not r.get("hits"):
         return None
 
-def download_pixabay_image(keyword, folder):
-    try:
-        r = requests.get(
-            "https://pixabay.com/api/",
-            params={
-                "key": PIXABAY_API_KEY,
-                "q": keyword,
-                "orientation": "vertical",
-                "per_page": 3
-            },
-            timeout=10
-        ).json()
+    url = r["hits"][0]["videos"]["large"]["url"]
+    path = os.path.join(folder, "bg.mp4")
+    with open(path, "wb") as f:
+        f.write(requests.get(url).content)
+    return path
 
-        if not r.get("hits"):
-            return None
+def pixabay_image(q, folder):
+    r = requests.get("https://pixabay.com/api/", params={
+        "key": PIXABAY_API_KEY,
+        "q": q,
+        "orientation": "vertical",
+        "per_page": 3
+    }).json()
 
-        url = r["hits"][0]["largeImageURL"]
-        path = os.path.join(folder, "pixabay.jpg")
-
-        with open(path, "wb") as f:
-            f.write(requests.get(url, timeout=10).content)
-
-        with Image.open(path) as im:
-            im.verify()
-
-        return path
-    except:
+    if not r.get("hits"):
         return None
 
-# ============================================================
-# WIKIPEDIA IMAGE
-# ============================================================
-def download_wikipedia_image(keyword, folder):
-    try:
-        if not keyword:
-            return None
+    path = os.path.join(folder, "bg.jpg")
+    with open(path, "wb") as f:
+        f.write(requests.get(r["hits"][0]["largeImageURL"]).content)
+    return path
 
-        title = urllib.parse.quote(keyword.replace(" ", "_"))
-        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{title}"
-
-        r = requests.get(url, headers=HEADERS, timeout=10)
-        r.raise_for_status()
-        data = r.json()
-
-        thumb = data.get("thumbnail", {}).get("source")
-        if not thumb or thumb.lower().endswith(".svg"):
-            return None
-
-        path = os.path.join(folder, "wiki.jpg")
-        img_resp = requests.get(thumb, headers=HEADERS, timeout=10)
-        img_resp.raise_for_status()
-
-        with open(path, "wb") as f:
-            f.write(img_resp.content)
-
-        with Image.open(path) as im:
-            im.verify()
-
-        return path
-    except:
+def wiki_image(q, folder):
+    if not q:
         return None
-
-# ============================================================
-# NEWS SUBTITLE GENERATOR (FIXED)
-# ============================================================
-def create_news_subtitle(text, folder):
-    img = Image.new("RGBA", (SHORT_WIDTH, 220), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(img)
-
-    try:
-        font = ImageFont.truetype("assets/Roboto-Bold.ttf", 46)
-    except:
-        font = ImageFont.load_default()
-
-    max_chars = 28
-    words = text.split()
-    lines, line = [], ""
-
-    for w in words:
-        test = f"{line} {w}".strip()
-        if len(test) <= max_chars:
-            line = test
-        else:
-            lines.append(line)
-            line = w
-    if line:
-        lines.append(line)
-
-    text_height = len(lines) * 55
-    bg_y = 220 - text_height - 20
-
-    draw.rectangle(
-        [(0, bg_y), (SHORT_WIDTH, 220)],
-        fill=(0, 0, 0, 180)
-    )
-
-    y = bg_y + 10
-    for l in lines:
-        w, h = get_text_size(draw, l, font)
-        draw.text(
-            ((SHORT_WIDTH - w) // 2, y),
-            l,
-            font=font,
-            fill="white"
-        )
-        y += 55
-
-    path = os.path.join(folder, "subtitle.png")
-    img.save(path)
+    url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(q)}"
+    r = requests.get(url, headers=HEADERS).json()
+    img = r.get("thumbnail", {}).get("source")
+    if not img or img.endswith(".svg"):
+        return None
+    path = os.path.join(folder, "wiki.jpg")
+    with open(path, "wb") as f:
+        f.write(requests.get(img).content)
     return path
 
 # ============================================================
-# MAIN VIDEO GENERATOR
+# ADVANCED WORD-SYNC SUBTITLES
 # ============================================================
-def create_video(storyboard):
-    segments = []
-    total = 0
+def subtitle_word_clips(text, duration):
+    words = text.split()
+    words_per_chunk = 3
+    chunks = [
+        " ".join(words[i:i + words_per_chunk])
+        for i in range(0, len(words), words_per_chunk)
+    ]
 
-    for i, entry in enumerate(storyboard):
-        folder = f"./temp_{i}"
-        os.makedirs(folder, exist_ok=True)
+    per_chunk_time = duration / len(chunks)
+    clips = []
 
-        print(f"[SCENE {i}] START")
+    font_size = 64
+    font = ImageFont.truetype("assets/Roboto-Bold.ttf", font_size)
 
-        audio_path = f"{folder}/audio.wav"
-        tts_text = clean_text(entry["text"])
+    for i, chunk in enumerate(chunks):
+        img = Image.new("RGBA", (SHORT_W, 220), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
 
-        tts_client.tts_to_file(
-            text=tts_text,
-            file_path=audio_path,
-            language="en",
-            speaker_wav=SPEAKER_WAV
+        w, h = get_text_size(d, chunk, font)
+        y = 80
+
+        d.rectangle(
+            [(0, y - 25), (SHORT_W, y + h + 25)],
+            fill=(0, 0, 0, 190)
         )
 
-        audio = AudioFileClip(audio_path)
-        remaining = MAX_SHORT_DURATION - total
-        if remaining <= 0:
-            break
+        d.text(
+            ((SHORT_W - w) // 2, y),
+            chunk,
+            font=font,
+            fill="#FFFFFF"
+        )
 
-        audio = audio.subclip(0, min(audio.duration, remaining))
-        duration = audio.duration
-        total += duration
+        p = f"/tmp/sub_{i}.png"
+        img.save(p)
 
-        clip = None
-
-        if entry.get("visual_type") == "emotion":
-            for kw in [entry.get("keyword")] + KEYWORD_FALLBACKS:
-                video = download_pixabay_video(kw, folder)
-                if video:
-                    clip = ken_burns(normalize_video(video, duration))
-                    break
-
-        if not clip and entry.get("visual_type") == "identity":
-            img = download_wikipedia_image(entry.get("identity_keyword"), folder)
-            if img:
-                safe = f"{folder}/safe.jpg"
-                if fit_image_to_viewport(img, safe):
-                    clip = ken_burns(ImageClip(safe).set_duration(duration))
-
-        if not clip:
-            img = download_pixabay_image(entry.get("keyword"), folder)
-            if img:
-                safe = f"{folder}/safe.jpg"
-                if fit_image_to_viewport(img, safe):
-                    clip = ken_burns(ImageClip(safe).set_duration(duration))
-
-        subtitle_img = create_news_subtitle(tts_text, folder)
-        subtitle_clip = (
-            ImageClip(subtitle_img)
-            .set_duration(duration)
+        clips.append(
+            ImageClip(p)
+            .set_start(i * per_chunk_time)
+            .set_duration(per_chunk_time)
             .set_position(("center", "bottom"))
         )
 
-        final_clip = CompositeVideoClip(
-            [clip, subtitle_clip],
-            size=(SHORT_WIDTH, SHORT_HEIGHT)
+    return clips
+
+# ============================================================
+# MAIN
+# ============================================================
+def create_video(storyboard):
+    final_clips = []
+    total = 0
+
+    for i, s in enumerate(storyboard):
+        folder = f"temp_{i}"
+        os.makedirs(folder, exist_ok=True)
+
+        text = clean_text(s["text"])
+        audio_path = f"{folder}/audio.wav"
+
+        tts.tts_to_file(
+            text=text,
+            file_path=audio_path,
+            speaker_wav=SPEAKER_WAV,
+            language="en"
+        )
+
+        audio = AudioFileClip(audio_path)
+        duration = min(audio.duration, MAX_DURATION - total)
+        total += duration
+
+        bg = None
+
+        if s.get("visual_type") == "emotion":
+            for k in [s.get("keyword")] + KEYWORD_FALLBACKS:
+                v = pixabay_video(k, folder)
+                if v:
+                    bg = ken_burns(VideoFileClip(v).subclip(0, duration).resize(height=SHORT_H))
+                    break
+
+        if not bg:
+            img = wiki_image(s.get("identity_keyword"), folder) or pixabay_image(s.get("keyword"), folder)
+            safe = f"{folder}/safe.jpg"
+            fit_image(img, safe)
+            bg = ken_burns(ImageClip(safe).set_duration(duration))
+
+        subs = subtitle_word_clips(text, duration)
+
+        clip = CompositeVideoClip(
+            [bg] + subs,
+            size=(SHORT_W, SHORT_H)
         ).set_audio(audio)
 
-        segments.append(final_clip)
+        final_clips.append(clip)
 
-        print(f"[SCENE {i}] DONE ({duration:.2f}s)")
-
-        if total >= MAX_SHORT_DURATION:
+        if total >= MAX_DURATION:
             break
 
-    final = concatenate_videoclips(segments, method="compose")
+    final = concatenate_videoclips(final_clips, method="compose")
     final.write_videofile(
         "final_video.mp4",
         fps=30,
