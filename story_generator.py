@@ -56,6 +56,13 @@ def clean_text(text):
     text = unicodedata.normalize("NFKD", text)
     return text.encode("ascii", "ignore").decode()
 
+def humanize_text(text):
+    text = text.replace(".", ". ")
+    text = text.replace("!", "! ")
+    text = text.replace("?", "? ")
+    text = text.replace(",", ", ")
+    return text
+
 def ensure_speaker():
     os.makedirs("assets", exist_ok=True)
     if not os.path.exists(SPEAKER_WAV):
@@ -217,11 +224,8 @@ def create_video(storyboard):
             file_path=audio_path,
             speaker_wav=SPEAKER_WAV,
             language="en",
-            speed=0.95,             # slightly slower = natural
-            temperature=0.4,        # less robotic
-            repetition_penalty=5.0  # avoid monotone
+            speed=0.95
         )
-
 
         audio = AudioFileClip(audio_path)
         duration = min(audio.duration, MAX_DURATION - total)
@@ -259,20 +263,12 @@ def create_video(storyboard):
             break
 
     out = concatenate_videoclips(final, method="compose")
-    out.write_videofile("final_video.mp4", fps=30, codec="libx264", audio_codec="aac", threads=2)
+    out.write_videofile(
+        "final_video.mp4",
+        fps=30,
+        codec="libx264",
+        audio_codec="aac",
+        threads=2
+    )
 
     return "final_video.mp4"
-
-
-    def humanize_text(text):
-    text = text.replace(".", ". ")
-    text = text.replace("!", "! ")
-    text = text.replace("?", "? ")
-
-    # Add natural pauses
-    text = text.replace(",", ", <break time='0.2s'/>")
-
-    # Add emotion cues
-    text = "<prosody rate='90%' pitch='+2%'>" + text + "</prosody>"
-    return text
-
