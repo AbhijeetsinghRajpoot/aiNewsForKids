@@ -209,10 +209,19 @@ def create_video(storyboard):
         folder = f"temp_{i}"
         os.makedirs(folder, exist_ok=True)
 
-        text = clean_text(s["text"])
+        text = humanize_text(clean_text(s["text"]))
         audio_path = f"{folder}/audio.wav"
 
-        tts.tts_to_file(text=text, file_path=audio_path, speaker_wav=SPEAKER_WAV, language="en")
+        tts.tts_to_file(
+            text=text,
+            file_path=audio_path,
+            speaker_wav=SPEAKER_WAV,
+            language="en",
+            speed=0.95,             # slightly slower = natural
+            temperature=0.4,        # less robotic
+            repetition_penalty=5.0  # avoid monotone
+        )
+
 
         audio = AudioFileClip(audio_path)
         duration = min(audio.duration, MAX_DURATION - total)
@@ -253,3 +262,17 @@ def create_video(storyboard):
     out.write_videofile("final_video.mp4", fps=30, codec="libx264", audio_codec="aac", threads=2)
 
     return "final_video.mp4"
+
+
+    def humanize_text(text):
+    text = text.replace(".", ". ")
+    text = text.replace("!", "! ")
+    text = text.replace("?", "? ")
+
+    # Add natural pauses
+    text = text.replace(",", ", <break time='0.2s'/>")
+
+    # Add emotion cues
+    text = "<prosody rate='90%' pitch='+2%'>" + text + "</prosody>"
+    return text
+
