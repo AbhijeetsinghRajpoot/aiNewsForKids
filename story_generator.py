@@ -65,7 +65,14 @@ def ensure_speaker():
         with open(SPEAKER_WAV, "wb") as f:
             f.write(r.content)
 
+def ensure_fallback():
+    os.makedirs("assets", exist_ok=True)
+    if not os.path.exists(FALLBACK_IMG):
+        img = Image.new("RGB", (SHORT_W, SHORT_H), (30, 30, 30))
+        img.save(FALLBACK_IMG)
+
 ensure_speaker()
+ensure_fallback()
 
 tts = TTS(
     model_name="tts_models/multilingual/multi-dataset/xtts_v2",
@@ -73,7 +80,7 @@ tts = TTS(
 )
 
 # ============================================================
-# VISUAL HELPERS (SAFE)
+# VISUAL HELPERS
 # ============================================================
 def fit_image(src, dst):
     if not src or not os.path.exists(src):
@@ -82,37 +89,28 @@ def fit_image(src, dst):
         with Image.open(src).convert("RGB") as img:
             sw, sh = img.size
             scale = max(SHORT_W / sw, SHORT_H / sh)
-            img = img.resize(
-                (int(sw * scale), int(sh * scale)),
-                Image.Resampling.LANCZOS
-            )
+            img = img.resize((int(sw * scale), int(sh * scale)), Image.Resampling.LANCZOS)
             left = (img.width - SHORT_W) // 2
             top = (img.height - SHORT_H) // 2
-            img.crop(
-                (left, top, left + SHORT_W, top + SHORT_H)
-            ).save(dst, "JPEG", quality=95)
+            img.crop((left, top, left + SHORT_W, top + SHORT_H)).save(dst, "JPEG", quality=95)
         return True
-    except Exception:
+    except:
         return False
 
 def ken_burns(clip, zoom=1.07):
     return clip.resize(lambda t: 1 + (zoom - 1) * (t / clip.duration))
 
 # ============================================================
-# MEDIA FETCH (SAFE)
+# MEDIA FETCH
 # ============================================================
 def pixabay_video(q, folder):
     try:
-        r = requests.get(
-            "https://pixabay.com/api/videos/",
-            params={
-                "key": PIXABAY_API_KEY,
-                "q": q,
-                "per_page": 3,
-                "safesearch": "true"
-            },
-            timeout=10
-        ).json()
+        r = requests.get("https://pixabay.com/api/videos/", params={
+            "key": PIXABAY_API_KEY,
+            "q": q,
+            "per_page": 3,
+            "safesearch": "true"
+        }, timeout=10).json()
 
         if not r.get("hits"):
             return None
@@ -127,16 +125,12 @@ def pixabay_video(q, folder):
 
 def pixabay_image(q, folder):
     try:
-        r = requests.get(
-            "https://pixabay.com/api/",
-            params={
-                "key": PIXABAY_API_KEY,
-                "q": q,
-                "orientation": "vertical",
-                "per_page": 3
-            },
-            timeout=10
-        ).json()
+        r = requests.get("https://pixabay.com/api/", params={
+            "key": PIXABAY_API_KEY,
+            "q": q,
+            "orientation": "vertical",
+            "per_page": 3
+        }, timeout=10).json()
 
         if not r.get("hits"):
             return None
@@ -174,16 +168,12 @@ def wiki_image(q, folder):
         return None
 
 # ============================================================
-# WORD-CHUNK SUBTITLES (STABLE)
+# SUBTITLES
 # ============================================================
 def subtitle_word_clips(text, duration):
     words = text.split()
     chunk_size = 3
-    chunks = [
-        " ".join(words[i:i + chunk_size])
-        for i in range(0, len(words), chunk_size)
-    ]
-
+    chunks = [" ".join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
     per = duration / len(chunks)
     clips = []
 
@@ -195,30 +185,16 @@ def subtitle_word_clips(text, duration):
     for i, chunk in enumerate(chunks):
         img = Image.new("RGBA", (SHORT_W, 220), (0, 0, 0, 0))
         d = ImageDraw.Draw(img)
-
         w, h = get_text_size(d, chunk, font)
         y = 80
 
-        d.rectangle(
-            [(0, y - 25), (SHORT_W, y + h + 25)],
-            fill=(0, 0, 0, 190)
-        )
-        d.text(
-            ((SHORT_W - w) // 2, y),
-            chunk,
-            font=font,
-            fill="white"
-        )
+        d.rectangle([(0, y - 25), (SHORT_W, y + h + 25)], fill=(0, 0, 0, 190))
+        d.text(((SHORT_W - w) // 2, y), chunk, font=font, fill="white")
 
         p = f"temp_sub_{i}.png"
         img.save(p)
 
-        clips.append(
-            ImageClip(p)
-            .set_start(i * per)
-            .set_duration(per)
-            .set_position(("center", "bottom"))
-        )
+        clips.append(ImageClip(p).set_start(i * per).set_duration(per).set_position(("center", "bottom")))
 
     return clips
 
@@ -236,12 +212,7 @@ def create_video(storyboard):
         text = clean_text(s["text"])
         audio_path = f"{folder}/audio.wav"
 
-        tts.tts_to_file(
-            text=text,
-            file_path=audio_path,
-            speaker_wav=SPEAKER_WAV,
-            language="en"
-        )
+        tts.tts_to_file(text=text, file_path=audio_path, speaker_wav=SPEAKER_WAV, language="en")
 
         audio = AudioFileClip(audio_path)
         duration = min(audio.duration, MAX_DURATION - total)
@@ -253,9 +224,7 @@ def create_video(storyboard):
             for k in [s.get("keyword")] + KEYWORD_FALLBACKS:
                 v = pixabay_video(k, folder)
                 if v:
-                    bg = ken_burns(
-                        VideoFileClip(v).subclip(0, duration).resize(height=SHORT_H)
-                    )
+                    bg = ken_burns(VideoFileClip(v).subclip(0, duration).resize(height=SHORT_H))
                     break
 
         if not bg:
@@ -266,28 +235,21 @@ def create_video(storyboard):
             )
 
             safe = f"{folder}/safe.jpg"
-            fit_image(img, safe)
+            ok = fit_image(img, safe)
+            if not ok:
+                fit_image(FALLBACK_IMG, safe)
+
             bg = ken_burns(ImageClip(safe).set_duration(duration))
 
         subs = subtitle_word_clips(text, duration)
 
-        clip = CompositeVideoClip(
-            [bg] + subs,
-            size=(SHORT_W, SHORT_H)
-        ).set_audio(audio)
-
+        clip = CompositeVideoClip([bg] + subs, size=(SHORT_W, SHORT_H)).set_audio(audio)
         final.append(clip)
 
         if total >= MAX_DURATION:
             break
 
     out = concatenate_videoclips(final, method="compose")
-    out.write_videofile(
-        "final_video.mp4",
-        fps=30,
-        codec="libx264",
-        audio_codec="aac",
-        threads=2
-    )
+    out.write_videofile("final_video.mp4", fps=30, codec="libx264", audio_codec="aac", threads=2)
 
     return "final_video.mp4"
