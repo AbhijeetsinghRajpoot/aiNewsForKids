@@ -4,6 +4,16 @@ import urllib.parse
 import unicodedata
 from PIL import Image, ImageDraw, ImageFont
 
+from moviepy.editor import (
+    ImageClip,
+    VideoFileClip,
+    AudioFileClip,
+    CompositeVideoClip,
+    concatenate_videoclips
+)
+
+from TTS.api import TTS
+
 # ============================================================
 # PILLOW 10+ COMPATIBILITY
 # ============================================================
@@ -16,20 +26,13 @@ def get_text_size(draw, text, font):
         return b[2] - b[0], b[3] - b[1]
     return draw.textsize(text, font=font)
 
-from moviepy.editor import (
-    ImageClip,
-    VideoFileClip,
-    AudioFileClip,
-    CompositeVideoClip,
-    concatenate_videoclips
-)
-
-from TTS.api import TTS
-
 # ============================================================
 # CONFIG
 # ============================================================
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_CX = os.getenv("GOOGLE_CX")
+
 if not PIXABAY_API_KEY:
     raise RuntimeError("PIXABAY_API_KEY missing")
 
@@ -174,6 +177,38 @@ def wiki_image(q, folder):
     except:
         return None
 
+def google_image(q, folder):
+    if not GOOGLE_API_KEY or not GOOGLE_CX or not q:
+        return None
+    try:
+        url = "https://www.googleapis.com/customsearch/v1"
+        params = {
+            "key": GOOGLE_API_KEY,
+            "cx": GOOGLE_CX,
+            "q": q,
+            "searchType": "image",
+            "num": 3,
+            "safe": "active",
+            "imgType": "photo"
+        }
+
+        r = requests.get(url, params=params, timeout=10)
+        data = r.json()
+
+        if "items" not in data:
+            return None
+
+        img_url = data["items"][0]["link"]
+        path = os.path.join(folder, "google.jpg")
+
+        with open(path, "wb") as f:
+            f.write(requests.get(img_url, timeout=10).content)
+
+        Image.open(path).verify()
+        return path
+    except:
+        return None
+
 # ============================================================
 # SUBTITLES
 # ============================================================
@@ -244,6 +279,7 @@ def create_video(storyboard):
             img = (
                 wiki_image(s.get("identity_keyword"), folder)
                 or pixabay_image(s.get("keyword"), folder)
+                or google_image(s.get("keyword"), folder)
                 or FALLBACK_IMG
             )
 
