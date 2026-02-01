@@ -35,7 +35,7 @@ if not PIXABAY_API_KEY:
 
 SHORT_W, SHORT_H = 720, 1280
 MAX_DURATION = 59
-SPEAKER_WAV = "assets/voice.wav"
+SPEAKER_WAV = "assets/voice2.wav"
 FALLBACK_IMG = "assets/fallback.jpg"
 
 HEADERS = {
