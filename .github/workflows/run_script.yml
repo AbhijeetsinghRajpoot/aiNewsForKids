@@ -1,10 +1,10 @@
-name: Run Story Generator (Wikipedia + Pixabay)
+name: Run Story Generator (Wikipedia + Pixabay + Google)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */8 * * *" # Every 4 hours (UTC)
-   
+    - cron: "0 */8 * * *" # Every 8 hours (UTC)
+
 # Prevent overlapping runs
 concurrency:
   group: story-generator
@@ -17,10 +17,13 @@ jobs:
 
     env:
       PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      GOOGLE_CX: ${{ secrets.GOOGLE_CX }}
+
       COQUI_TOS_AGREED: "1"
       SHORTS_MODE: "true"
       FFMPEG_BINARY: "/usr/bin/ffmpeg"
-      PYTHONUNBUFFERED: "1"   # Better logs
+      PYTHONUNBUFFERED: "1"
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
 
     steps:
