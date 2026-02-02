@@ -3,7 +3,7 @@ name: Run Story Generator (Wikipedia + Pixabay + Google)
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */8 * * *" # Every 8 hours (UTC)
+    # - cron: "0 */8 * * *" # Every 8 hours (UTC)
 
 # Prevent overlapping runs
 concurrency:
